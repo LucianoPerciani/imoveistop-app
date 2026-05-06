@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro de Cliente - Aluguel de Imóveis</title>
+    <link rel="stylesheet" href="cadastrocli.css">
+</head>
+<body>
+
+    <header class="main-header">
+        <div class="header-content">
+            <a href="index.html" class="logo">🏠 ImóveisTop</a>
+            <nav>
+                <a href="index.html">Voltar para Home</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="auth-page">
+        <div class="cadastro-container">
+            <h2>Acesse sua conta</h2>
+            <p>Para favoritar imóveis e enviar propostas</p>
+            
+            <div class="form-group">
+                <input type="text" id="clienteNome" placeholder="Nome Completo">
+                <input type="email" id="clienteEmail" placeholder="Seu melhor e-mail">
+                <input type="password" id="clienteSenha" placeholder="Crie uma senha">
+                
+                <!-- O segredo está no ID aqui embaixo -->
+               <button id="btn-cadastrar" class="btn-principal">
+    Criar Conta / Entrar
+</button>
+            </div>
+            
+            <p class="footer-form">Ao se cadastrar, você concorda com nossos termos.</p>
+        </div>
+    </main>
+
+    <script type="module" src="cadastro.js"></script>
+</body>
+</html>

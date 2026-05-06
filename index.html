@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vitrine de Imóveis - Alugue Já</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f4f9; margin: 0; padding: 0; }
+        
+        /* Cabeçalho */
+        .main-header { background: white; padding: 15px 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 1000; }
+        .header-content { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-size: 22px; font-weight: bold; color: #ff385c; text-decoration: none; }
+        
+        #user-area { display: flex; align-items: center; gap: 15px; }
+
+        .btn-anuncie {
+            text-decoration: none;
+            color: #222;
+            font-weight: 600;
+            font-size: 14px;
+            padding: 10px 15px;
+            border-radius: 20px;
+            transition: 0.3s;
+        }
+        .btn-anuncie:hover { background-color: #f7f7f7; color: #ff385c; }
+
+        .btn-login-head { text-decoration: none; color: #222; font-weight: 500; border: 1px solid #ddd; padding: 8px 16px; border-radius: 20px; transition: 0.3s; }
+        .btn-login-head:hover { background: #f7f7f7; }
+
+        h1 { text-align: center; color: #222; margin-top: 30px; }
+
+        /* Barra de Busca */
+        .search-container {
+            display: flex; justify-content: center; gap: 10px; padding: 15px;
+            background: white; border-radius: 50px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            max-width: 900px; margin: 20px auto 30px auto; flex-wrap: wrap;
+        }
+        .search-container input, .search-container select { 
+            border: 1px solid #ddd; padding: 10px 15px; border-radius: 25px; outline: none; font-size: 14px;
+        }
+        #btnFiltrar { background: #ff385c; color: white; border: none; padding: 10px 25px; border-radius: 25px; cursor: pointer; font-weight: bold; transition: 0.3s; }
+        #btnFiltrar:hover { background: #e31c5f; }
+
+        /* Cards */
+        .container-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 25px; max-width: 1200px; margin: 0 auto; padding: 20px; }
+        .card-imovel { background: white; border-radius: 15px; overflow: hidden; transition: transform 0.3s; position: relative; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .card-imovel:hover { transform: translateY(-5px); }
+        
+        .card-foto-wrapper { position: relative; }
+        .card-imovel img { width: 100%; aspect-ratio: 1 / 1; object-fit: cover; display: block; }
+
+        .btn-favorito {
+            position: absolute; top: 15px; right: 15px; background: rgba(0,0,0,0.5); border: none;
+            border-radius: 50%; width: 40px; height: 40px;
+            cursor: pointer; font-size: 20px; color: white; 
+            display: flex; align-items: center; justify-content: center;
+            transition: 0.3s; z-index: 10; outline: none;
+        }
+        .btn-favorito.ativo { color: #ff385c; background: white; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+
+        .card-info { padding: 15px; }
+        .card-info h3 { margin: 0; font-size: 18px; color: #222; }
+        .preco { color: #222; font-weight: bold; font-size: 1.1em; margin: 8px 0; }
+        
+        .btn-whatsapp {
+            display: flex; align-items: center; justify-content: center;
+            background-color: #25d366; color: white; text-decoration: none;
+            padding: 12px; border-radius: 8px; font-weight: bold; transition: 0.3s;
+        }
+        .btn-whatsapp:hover { background-color: #128c7e; }
+
+        @media (max-width: 600px) {
+            .btn-anuncie { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="main-header">
+        <div class="header-content">
+            <a href="index.html" class="logo">🏠 ImóveisTop</a>
+            
+            <div id="user-area">
+                <a href="anunciar.html" class="btn-anuncie">Anuncie seu espaço</a>
+                <a href="admin.html" style="text-decoration:none; color:#666; font-size: 13px;">⚙️ Admin</a>
+                <div id="auth-content">
+                    <a href="login.html" class="btn-login-head">Entrar</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <h1>🏡 Imóveis Disponíveis</h1>
+
+    <div class="search-container">
+        <input type="text" id="filtroTitulo" placeholder="Para onde você vai?">
+        <input type="number" id="filtroPreco" placeholder="Preço máximo">
+        <select id="filtroComodidade">
+            <option value="">Todas as comodidades</option>
+            <option value="Wi-Fi">Wi-Fi</option>
+            <option value="Piscina">Piscina</option>
+            <option value="Ar Condicionado">Ar Condicionado</option>
+        </select>
+        <button id="btnFiltrar">🔍 Buscar</button>
+    </div>
+
+    <div id="listaImoveis" class="container-cards">
+        <p style="text-align: center; grid-column: 1/-1;">Carregando imóveis...</p>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getFirestore, collection, getDocs, doc, getDoc, updateDoc, arrayUnion, arrayRemove } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCmxZVNT7K8ZLV627XeKYRDJiViGw5OUCk",
+            authDomain: "cadastrocasas-50f8a.firebaseapp.com",
+            projectId: "cadastrocasas-50f8a",
+            storageBucket: "cadastrocasas-50f8a.firebasestorage.app",
+            messagingSenderId: "393041222159",
+            appId: "1:393041222159:web:c064df3b250abdb340e17a"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+
+        // --- VERIFICAÇÃO DE USUÁRIO ---
+        onAuthStateChanged(auth, async (user) => {
+            const authContent = document.getElementById('auth-content');
+            if (user) {
+                const docRef = doc(db, "usuarios", user.uid);
+                const snap = await getDoc(docRef);
+                
+                if (snap.exists()) {
+                    const nomeCompleto = snap.data().nome || "Usuário";
+                    const primeiroNome = nomeCompleto.split(" ")[0];
+                    authContent.innerHTML = `
+                        <span style="font-weight:bold; font-size: 14px;">Olá, ${primeiroNome}!</span>
+                        <button id="btn-sair" style="background:none; border:none; color:#ff385c; cursor:pointer; margin-left:10px; font-weight:bold;">Sair</button>
+                    `;
+                    
+                    document.getElementById('btn-sair').addEventListener('click', () => {
+                        signOut(auth).then(() => location.reload());
+                    });
+                }
+            } else {
+                authContent.innerHTML = `<a href="login.html" class="btn-login-head">Entrar</a>`;
+            }
+            carregarImoveis();
+        });
+
+        // --- FAVORITOS (Global para o botão funcionar) ---
+        window.gerenciarFavorito = async (idImovel, btn) => {
+            const user = auth.currentUser;
+            if (!user) {
+                alert("Faça login para favoritar!");
+                window.location.href = "login.html";
+                return;
+            }
+
+            const userRef = doc(db, "usuarios", user.uid);
+            const estaAtivo = btn.classList.contains('ativo');
+            btn.classList.toggle('ativo');
+
+            try {
+                if (estaAtivo) {
+                    await updateDoc(userRef, { favoritos: arrayRemove(idImovel) });
+                } else {
+                    await updateDoc(userRef, { favoritos: arrayUnion(idImovel) });
+                }
+            } catch (error) {
+                btn.classList.toggle('ativo');
+                console.error("Erro ao favoritar:", error);
+            }
+        };
+
+        // --- CARREGAR IMÓVEIS ---
+        async function carregarImoveis(filtros = {}) {
+            const container = document.getElementById('listaImoveis');
+            const user = auth.currentUser;
+            let favoritosAtuais = [];
+
+            if (user) {
+                const snap = await getDoc(doc(db, "usuarios", user.uid));
+                if (snap.exists()) favoritosAtuais = snap.data().favoritos || [];
+            }
+
+            const querySnapshot = await getDocs(collection(db, "imoveis"));
+            container.innerHTML = ""; 
+
+            querySnapshot.forEach((documento) => {
+                const dados = documento.data();
+                const id = documento.id;
+
+                if (dados.idDono && dados.idDono !== "admin" && dados.status !== "ativo") return;
+
+                const tBusca = (filtros.titulo || "").toLowerCase().trim();
+                if (tBusca && !(dados.titulo || "").toLowerCase().includes(tBusca)) return;
+                
+                const pMax = Number(filtros.preco);
+                if (pMax && (Number(dados.preco) || 0) > pMax) return;
+                
+                if (filtros.comodidade && !(dados.comodidades || []).includes(filtros.comodidade)) return;
+
+                const isFav = favoritosAtuais.includes(id) ? 'ativo' : '';
+                const preco = (Number(dados.preco) || 0).toLocaleString('pt-BR');
+
+                container.innerHTML += `
+                    <div class="card-imovel">
+                        <div class="card-foto-wrapper">
+                            <button class="btn-favorito ${isFav}" onclick="gerenciarFavorito('${id}', this)">❤</button>
+                            <img src="${dados.foto || 'https://via.placeholder.com/400'}">
+                        </div>
+                        <div class="card-info">
+                            <h3>${dados.titulo || 'Sem título'}</h3>
+                            <p class="preco">R$ ${preco} / noite</p>
+                            <a href="https://wa.me/5519999859655?text=Olá, tenho interesse no imóvel: ${encodeURIComponent(dados.titulo)}" target="_blank" class="btn-whatsapp">Reservar</a>
+                        </div>
+                    </div>
+                `;
+            });
+
+            if (container.innerHTML === "") {
+                container.innerHTML = "<p style='text-align:center; grid-column:1/-1;'>Nenhum imóvel encontrado.</p>";
+            }
+        }
+
+        document.getElementById('btnFiltrar').onclick = () => {
+            carregarImoveis({
+                titulo: document.getElementById('filtroTitulo').value,
+                preco: document.getElementById('filtroPreco').value,
+                comodidade: document.getElementById('filtroComodidade').value
+            });
+        };
+    </script>
+</body>
+</html>

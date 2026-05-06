@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meu Perfil - ImóveisTop</title>
+    <link rel="stylesheet" href="stylecadastro.css"> <!-- Reutilizando seu estilo base -->
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background: #f9f9f9; }
+        .container-perfil { max-width: 1000px; margin: 30px auto; padding: 20px; }
+        .user-section { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); margin-bottom: 30px; }
+        .user-section h2 { color: #ff385c; border-bottom: 2px solid #fef2f4; padding-bottom: 10px; margin-bottom: 20px; }
+        
+        /* Grid de cards compactos para o perfil */
+        .grid-perfil { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px; }
+        .card-mini { border: 1px solid #eee; border-radius: 10px; overflow: hidden; background: #fff; position: relative; }
+        .card-mini img { width: 100%; height: 140px; object-fit: cover; }
+        .card-mini-info { padding: 10px; }
+        .card-mini-info h4 { margin: 0; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        
+        .status-badge { position: absolute; top: 10px; left: 10px; padding: 4px 8px; border-radius: 5px; font-size: 10px; font-weight: bold; color: white; }
+        .status-pendente { background: #ffa500; }
+        .status-ativo { background: #27ae60; }
+
+        .btn-excluir-anuncio { background: #ff385c; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; font-size: 12px; margin-top: 10px; width: 100%; }
+        
+        .empty-msg { color: #888; font-style: italic; font-size: 14px; }
+        .btn-voltar { display: inline-block; margin-bottom: 20px; text-decoration: none; color: #ff385c; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <div class="container-perfil">
+        <a href="index.html" class="btn-voltar">⬅ Voltar para a Vitrine</a>
+        
+        <header style="margin-bottom: 30px;">
+            <h1 id="boasVindas">Olá, Carregando...</h1>
+            <p>Gerencie seus anúncios e seus imóveis favoritos aqui.</p>
+        </header>
+
+        <!-- Seção: Meus Anúncios -->
+        <section class="user-section">
+            <h2>🏠 Meus Anúncios</h2>
+            <div id="meusAnunciosLista" class="grid-perfil">
+                <p class="empty-msg">Buscando seus anúncios...</p>
+            </div>
+        </section>
+
+        <!-- Seção: Favoritos -->
+        <section class="user-section">
+            <h2>❤ Meus Favoritos</h2>
+            <div id="meusFavoritosLista" class="grid-perfil">
+                <p class="empty-msg">Carregando seus favoritos...</p>
+            </div>
+        </section>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getFirestore, collection, query, where, getDocs, doc, getDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCmxZVNT7K8ZLV627XeKYRDJiViGw5OUCk",
+            authDomain: "cadastrocasas-50f8a.firebaseapp.com",
+            projectId: "cadastrocasas-50f8a",
+            storageBucket: "cadastrocasas-50f8a.firebasestorage.app",
+            messagingSenderId: "393041222159",
+            appId: "1:393041222159:web:c064df3b250abdb340e17a"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        const idClienteLogado = localStorage.getItem("idClienteLogado");
+
+        if (!idClienteLogado) {
+            alert("Você precisa estar logado para ver seu perfil.");
+            window.location.href = "login.html";
+        }
+
+        async function inicializarPerfil() {
+            // 1. Carregar Dados do Usuário (Nome)
+            const userSnap = await getDoc(doc(db, "clientes", idClienteLogado));
+            if (userSnap.exists()) {
+                document.getElementById('boasVindas').innerText = `Olá, ${userSnap.data().nome}!`;
+                const favoritosIds = userSnap.data().favoritos || [];
+                carregarFavoritos(favoritosIds);
+            }
+
+            carregarMeusAnuncios();
+        }
+
+        // 2. Carregar Anúncios que EU criei
+        async function carregarMeusAnuncios() {
+            const lista = document.getElementById('meusAnunciosLista');
+            const q = query(collection(db, "imoveis"), where("idDono", "==", idClienteLogado));
+            const querySnapshot = await getDocs(q);
+            
+            lista.innerHTML = "";
+            if (querySnapshot.empty) {
+                lista.innerHTML = "<p class='empty-msg'>Você ainda não anunciou nenhum imóvel.</p>";
+                return;
+            }
+
+            querySnapshot.forEach((documento) => {
+                const imovel = documento.data();
+                const id = documento.id;
+                const statusClass = imovel.status === "ativo" ? "status-ativo" : "status-pendente";
+                const statusTexto = imovel.status === "ativo" ? "PUBLICADO" : "PENDENTE";
+
+                lista.innerHTML += `
+                    <div class="card-mini" id="meu-anuncio-${id}">
+                        <span class="status-badge ${statusClass}">${statusTexto}</span>
+                        <img src="${imovel.foto}">
+                        <div class="card-mini-info">
+                            <h4>${imovel.titulo}</h4>
+                            <button class="btn-excluir-anuncio" onclick="excluirMeuAnuncio('${id}')">Excluir</button>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        // 3. Carregar Favoritos
+        async function carregarFavoritos(ids) {
+            const lista = document.getElementById('meusFavoritosLista');
+            lista.innerHTML = "";
+
+            if (ids.length === 0) {
+                lista.innerHTML = "<p class='empty-msg'>Sua lista de favoritos está vazia.</p>";
+                return;
+            }
+
+            // Para cada ID nos favoritos, buscar o detalhe do imóvel
+            for (const id of ids) {
+                const docRef = doc(db, "imoveis", id);
+                const docSnap = await getDoc(docRef);
+                if (docSnap.exists()) {
+                    const imovel = docSnap.data();
+                    lista.innerHTML += `
+                        <div class="card-mini">
+                            <img src="${imovel.foto}">
+                            <div class="card-mini-info">
+                                <h4>${imovel.titulo}</h4>
+                                <p style="font-size:12px; color:#ff385c; font-weight:bold;">R$ ${imovel.preco}</p>
+                            </div>
+                        </div>
+                    `;
+                }
+            }
+        }
+
+        // Função para excluir anúncio (vazada para o escopo global)
+        window.excluirMeuAnuncio = async (id) => {
+            if (confirm("Tem certeza que deseja excluir seu anúncio?")) {
+                await deleteDoc(doc(db, "imoveis", id));
+                alert("Anúncio removido!");
+                carregarMeusAnuncios();
+            }
+        };
+
+        inicializarPerfil();
+    </script>
+</body>
+</html>

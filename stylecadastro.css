@@ -1,0 +1,84 @@
+/* Estilos Gerais */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f0f2f5;
+    color: #333;
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+}
+
+.container {
+    max-width: 800px;
+    width: 100%;
+    background: #fff;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+}
+
+h2 { color: #2c3e50; margin-bottom: 20px; text-align: center; }
+
+label { display: block; margin-top: 15px; font-weight: bold; font-size: 0.9em; }
+
+input, textarea {
+    width: 100%;
+    padding: 12px;
+    margin-top: 5px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-sizing: border-box; /* Evita que o input passe da borda */
+}
+
+.comodidades-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    background: #f9f9f9;
+    padding: 15px;
+    border-radius: 8px;
+    margin-top: 10px;
+}
+
+button#btnSalvar {
+    width: 100%;
+    padding: 15px;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1em;
+    cursor: pointer;
+    margin-top: 25px;
+    transition: background 0.3s;
+}
+
+button#btnSalvar:hover { background-color: #2980b9; }
+
+/* Estilo da Lista de Gerenciamento */
+.admin-section { margin-top: 40px; }
+
+.item-gerenciamento {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    background: #fff;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    transition: 0.2s;
+}
+
+
+.item-gerenciamento:hover { background: #fcfcfc; border-color: #3498db; }
+
+.item-info { flex-grow: 1; }
+
+.btn-acoes { display: flex; gap: 8px; }
+
+.btn-edit { background: #f1c40f; color: #000; border: none; padding: 8px 12px; border-radius: 5px; cursor: pointer; }
+.btn-del { background: #e74c3c; color: #fff; border: none; padding: 8px 12px; border-radius: 5px; cursor: pointer; }
+
+.btn-edit:hover { background: #d4ac0d; }
+.btn-del:hover { background: #c0392b; }

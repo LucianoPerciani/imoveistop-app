@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - ImóveisTop</title>
+    <link rel="stylesheet" href="cadastrocli.css"> <!-- Reutilizamos o CSS do cadastro para manter o padrão -->
+</head>
+<body>
+    <header class="main-header">
+        <div class="header-content">
+            <a href="index.html" class="logo">🏠 ImóveisTop</a>
+            <nav><a href="index.html">Voltar</a></nav>
+        </div>
+    </header>
+
+    <main class="auth-page">
+        <div class="cadastro-container">
+            <h2>Bem-vindo de volta!</h2>
+            <p>Acesse sua conta para ver seus favoritos.</p>
+            
+            <div class="form-group">
+                <input type="email" id="loginEmail" placeholder="Seu e-mail">
+                <input type="password" id="loginSenha" placeholder="Sua senha">
+                
+                <button class="btn-principal" id="btnEntrar">Entrar agora</button>
+            </div>
+            
+            <p class="footer-form">Ainda não tem conta? <a href="cadastrocli.html" style="color:#ff385c;">Cadastre-se</a></p>
+        </div>
+    </main>
+
+    <script type="module" src="login.js"></script>
+</body>
+</html>
