@@ -1,6 +1,8 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getAuth, signInWithEmailAndPassword, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
+// 1. Configuração (Mantenha a sua sempre igual)
 const firebaseConfig = {
     apiKey: "AIzaSyCmxZVNT7K8ZLV627XeKYRDJiViGw5OUCk",
     authDomain: "cadastrocasas-50f8a.firebaseapp.com",
@@ -11,40 +13,63 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
 const db = getFirestore(app);
+
+// Força o Firebase a lembrar do login mesmo se fechar o navegador
+setPersistence(auth, browserLocalPersistence);
 
 document.getElementById('btnEntrar').onclick = async () => {
     const email = document.getElementById('loginEmail').value;
     const senha = document.getElementById('loginSenha').value;
+    const btn = document.getElementById('btnEntrar');
 
     if (!email || !senha) {
-        alert("Preencha todos os campos!");
+        alert("Por favor, preencha todos os campos!");
         return;
     }
 
     try {
-        // Busca na coleção 'clientes' onde o e-mail e a senha coincidem
-       // Removi o hífen de "e-mail" para "email"
-        const q = query(
-            collection(db, "clientes"), 
-            where("email", "==", email), 
-            where("senha", "==", senha)
-        );
+        btn.innerText = "Entrando...";
+        btn.disabled = true;
 
-        const querySnapshot = await getDocs(q);
+        // 1. Faz o login no Firebase Auth
+        const userCredential = await signInWithEmailAndPassword(auth, email, senha);
+        const user = userCredential.user;
 
-        if (!querySnapshot.empty) {
-            // Se encontrou, pega o ID do primeiro documento encontrado
-            const usuarioDoc = querySnapshot.docs[0];
-            localStorage.setItem("idClienteLogado", usuarioDoc.id);
+        // 2. Busca os dados na coleção "usuarios" para confirmar que o cadastro existe
+        const docRef = doc(db, "usuarios", user.uid);
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+            const dadosUsuario = docSnap.data();
+            // Opcional: Salva apenas o necessário no localStorage como cache rápido
+            localStorage.setItem("nomeUsuarioLogado", dadosUsuario.nome);
             
-            alert("Login realizado com sucesso! Bem-vindo.");
-            window.location.href = "index.html"; // Volta para a Home logado
-        } else {
-            alert("E-mail ou senha incorretos.");
+            alert(`Bem-vindo, ${dadosUsuario.nome.split(' ')[0]}!`);
         }
+
+        // 3. Redireciona para a index
+        window.location.href = "index.html";
+
     } catch (error) {
-        console.error("Erro ao fazer login:", error);
-        alert("Erro ao tentar entrar. Tente novamente.");
+        console.error("Erro de login:", error.code);
+        btn.innerText = "Entrar agora";
+        btn.disabled = false;
+
+        // Tratamento de erros amigável
+        switch (error.code) {
+            case 'auth/invalid-credential':
+                alert("E-mail ou senha incorretos.");
+                break;
+            case 'auth/user-not-found':
+                alert("Usuário não encontrado.");
+                break;
+            case 'auth/wrong-password':
+                alert("Senha incorreta.");
+                break;
+            default:
+                alert("Erro ao tentar entrar. Verifique sua conexão.");
+        }
     }
 };

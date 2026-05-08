@@ -3,40 +3,216 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cadastro de Cliente - Aluguel de Imóveis</title>
-    <link rel="stylesheet" href="cadastrocli.css">
+    <title>Meu Perfil | ImóveisTop</title>
+    <style>
+        :root {
+            --primary: #ff385c;
+            --dark: #222222;
+            --light: #f7f7f7;
+            --gray: #717171;
+            --border: #dddddd;
+            --white: #ffffff;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--light); color: var(--dark); }
+
+        /* HEADER PADRONIZADO */
+        .main-header { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            padding: 10px 4%; 
+            background: #fff; 
+            border-bottom: 1px solid #eee; 
+            position: sticky; 
+            top: 0; 
+            z-index: 1000; 
+        }
+        
+        .logo-container { display: flex; align-items: center; gap: 6px; text-decoration: none; }
+        .logo-text { font-weight: 800; font-size: 19px; color: #222; white-space: nowrap; }
+
+        .btn-voltar {
+            text-decoration: none;
+            color: #666;
+            font-size: 13px;
+            font-weight: 600;
+            padding: 7px 15px;
+            border-radius: 20px;
+            border: 1px solid #ddd;
+            transition: 0.3s;
+        }
+        .btn-voltar:hover { background-color: #f7f7f7; color: var(--primary); border-color: var(--primary); }
+
+        /* CONTEÚDO PERFIL */
+        .container { max-width: 500px; margin: 40px auto; padding: 0 20px; }
+        
+        .card-perfil {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 30px;
+            border: 1px solid var(--border);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+            text-align: center;
+        }
+
+        .avatar-grande {
+            width: 80px;
+            height: 80px;
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            font-weight: bold;
+            margin: 0 auto 20px;
+        }
+
+        h2 { font-size: 20px; margin-bottom: 20px; color: var(--dark); }
+
+        .form-perfil { display: grid; gap: 15px; text-align: left; }
+        .form-perfil label { font-size: 13px; font-weight: bold; color: var(--gray); margin-bottom: -10px; }
+        
+        .form-perfil input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            outline: none;
+            font-size: 14px;
+        }
+
+        .btn-salvar {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+        .btn-salvar:hover { opacity: 0.9; }
+
+        @media (max-width: 600px) {
+            .main-header { padding: 10px 2%; }
+        }
+    </style>
 </head>
 <body>
 
     <header class="main-header">
-        <div class="header-content">
-            <a href="index.html" class="logo">🏠 ImóveisTop</a>
-            <nav>
-                <a href="index.html">Voltar para Home</a>
-            </nav>
-        </div>
+        <a href="index.html" class="logo-container">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M3 9.5L12 3L21 9.5V20C21 20.5523 20.5523 21 20 21H14V14H10V21H4C3.44772 21 3 20.5523 3 20V9.5Z" stroke="#ff385c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M12 3V11" stroke="#ff385c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <span class="logo-text">Imóveis<span style="color: #ff385c;">Top</span></span>
+        </a>
+
+        <nav>
+            <a href="index.html" class="btn-voltar">Voltar</a>
+        </nav>
     </header>
 
-    <main class="auth-page">
-        <div class="cadastro-container">
-            <h2>Acesse sua conta</h2>
-            <p>Para favoritar imóveis e enviar propostas</p>
+    <div class="container">
+        <div class="card-perfil">
+            <div id="user-avatar" class="avatar-grande">?</div>
+            <h2 id="saudacao">Seu Perfil</h2>
             
-            <div class="form-group">
-                <input type="text" id="clienteNome" placeholder="Nome Completo">
-                <input type="email" id="clienteEmail" placeholder="Seu melhor e-mail">
-                <input type="password" id="clienteSenha" placeholder="Crie uma senha">
+            <div class="form-perfil">
+                <label>Nome Completo</label>
+                <input type="text" id="perfilNome" placeholder="Seu nome">
                 
-                <!-- O segredo está no ID aqui embaixo -->
-               <button id="btn-cadastrar" class="btn-principal">
-    Criar Conta / Entrar
-</button>
-            </div>
-            
-            <p class="footer-form">Ao se cadastrar, você concorda com nossos termos.</p>
-        </div>
-    </main>
+                <label>E-mail</label>
+                <input type="email" id="perfilEmail" disabled style="background: #f0f0f0; cursor: not-allowed;">
+                
+                <label>WhatsApp</label>
+                <input type="text" id="perfilWhats" placeholder="(00) 00000-0000">
 
-    <script type="module" src="cadastro.js"></script>
+                <button class="btn-salvar" id="btnSalvarPerfil">Atualizar Dados</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCmxZVNT7K8ZLV627XeKYRDJiViGw5OUCk",
+            authDomain: "cadastrocasas-50f8a.firebaseapp.com",
+            projectId: "cadastrocasas-50f8a",
+            storageBucket: "cadastrocasas-50f8a.firebasestorage.app",
+            messagingSenderId: "393041222159",
+            appId: "1:393041222159:web:c064df3b250abdb340e17a"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                document.getElementById('perfilEmail').value = user.email;
+                
+                // Carregar dados existentes
+                const docRef = doc(db, "usuarios", user.uid);
+                const snap = await getDoc(docRef);
+
+                if (snap.exists()) {
+                    const dados = snap.data();
+                    document.getElementById('perfilNome').value = dados.nome || "";
+                    document.getElementById('perfilWhats').value = dados.whatsapp || "";
+                    
+                    if (dados.nome) {
+                        const inicial = dados.nome.charAt(0).toUpperCase();
+                        document.getElementById('user-avatar').innerText = inicial;
+                        document.getElementById('saudacao').innerText = `Olá, ${dados.nome.split(' ')[0]}!`;
+                    }
+                }
+            } else {
+                window.location.href = "login.html";
+            }
+        });
+
+        document.getElementById('btnSalvarPerfil').onclick = async () => {
+            const user = auth.currentUser;
+            const btn = document.getElementById('btnSalvarPerfil');
+            
+            if (!user) return;
+
+            const nome = document.getElementById('perfilNome').value;
+            const whatsapp = document.getElementById('perfilWhats').value;
+
+            if (!nome) return alert("Por favor, preencha seu nome.");
+
+            btn.disabled = true;
+            btn.innerText = "Salvando...";
+
+            try {
+                await setDoc(doc(db, "usuarios", user.uid), {
+                    nome: nome,
+                    whatsapp: whatsapp,
+                    email: user.email,
+                    ultimaAtualizacao: new Date()
+                }, { merge: true });
+
+                alert("Perfil atualizado com sucesso!");
+                location.reload();
+            } catch (error) {
+                console.error(error);
+                alert("Erro ao salvar dados.");
+                btn.disabled = false;
+                btn.innerText = "Atualizar Dados";
+            }
+        };
+    </script>
 </body>
 </html>

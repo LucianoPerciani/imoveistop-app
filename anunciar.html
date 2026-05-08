@@ -4,44 +4,70 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Anunciar meu Espaço - ImóveisTop</title>
-    <link rel="stylesheet" href="stylecadastro.css"> <!-- Reutilizando seu CSS -->
-    <style>
-        /* Pequeno ajuste para o botão de voltar */
-        .btn-voltar { display: inline-block; margin-bottom: 20px; text-decoration: none; color: #ff385c; font-weight: bold; }
-    </style>
+    <link rel="stylesheet" href="stylecadastro.css">
 </head>
 <body>
 
+    <header class="main-header">
+        <div class="header-content">
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M3 9.5L12 3L21 9.5V20C21 20.5523 20.5523 21 20 21H14V14H10V21H4C3.44772 21 3 20.5523 3 20V9.5Z" stroke="#ff385c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M12 3V11" stroke="#ff385c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M9 6L12 3L15 6" stroke="#ff385c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <span style="font-family: 'Inter', sans-serif; font-weight: 800; font-size: 22px; color: #222;">
+                    Imóveis<span style="color: #ff385c;">Top</span>
+                </span>
+            </div>
+            <a href="index.html" style="text-decoration:none; color:#666; font-weight:bold; font-size:14px;">Voltar</a>
+        </div>
+    </header>
+
     <div class="container">
         <div class="form-box">
-            <a href="index.html" class="btn-voltar">⬅ Voltar para a Vitrine</a>
             <h2>🏠 Anuncie seu espaço</h2>
-            <p style="font-size: 14px; color: #666; margin-bottom: 20px;">Preencha os dados abaixo para publicar seu imóvel na nossa vitrine.</p>
+            <p class="subtitle">Preencha os dados abaixo para publicar seu imóvel.</p>
             
             <form id="formAnunciar">
-                <label>Título do Anúncio</label>
-                <input type="text" id="titulo" placeholder="Ex: Loft moderno à beira-mar" required>
-
-                <label>Preço da Diária (R$)</label>
-                <input type="number" id="preco" placeholder="Ex: 200" required>
-
-                <label>Descrição</label>
-                <textarea id="descricao" rows="4" placeholder="Conte o que torna seu espaço único..."></textarea>
-                
-                <label>Comodidades</label>
-                <div class="comodidades-grid">
-                    <label class="check-item"><input type="checkbox" name="comodidade" value="Wi-Fi"> Wi-Fi</label>
-                    <label class="check-item"><input type="checkbox" name="comodidade" value="Piscina"> Piscina</label>
-                    <label class="check-item"><input type="checkbox" name="comodidade" value="Ar Condicionado"> Ar Condicionado</label>
-                    <label class="check-item"><input type="checkbox" name="comodidade" value="Estacionamento"> Estacionamento</label>
-                    <label class="check-item"><input type="checkbox" name="comodidade" value="Cozinha"> Cozinha</label>
-                    <label class="check-item"><input type="checkbox" name="comodidade" value="Aceita Pets"> Pets</label>
+                <div class="input-group">
+                    <label>Título do Anúncio</label>
+                    <input type="text" id="titulo" placeholder="Ex: Loft moderno à beira-mar" required>
                 </div>
 
-                <label>Link da Foto (URL)</label>
-                <input type="url" id="fotoUrl" placeholder="https://linkdafoto.com/imagem.jpg" required>
+                <div class="input-group">
+                    <label>Endereço / Localização</label>
+                    <input type="text" id="endereco" placeholder="Ex: Guarujá, SP" required>
+                </div>
 
-                <button type="submit" id="btnPublicar">Publicar Agora</button>
+                <div class="input-group">
+                    <label>Preço da Diária (R$)</label>
+                    <input type="number" id="preco" placeholder="Ex: 200" required>
+                </div>
+
+                <div class="input-group">
+                    <label>Descrição</label>
+                    <textarea id="descricao" rows="3" placeholder="Conte o que torna seu espaço único..."></textarea>
+                </div>
+                
+                <div class="input-group">
+                    <label>Comodidades</label>
+                    <div class="comodidades-grid">
+                        <label class="check-item"><input type="checkbox" name="comodidade" value="Wi-Fi"> Wi-Fi</label>
+                        <label class="check-item"><input type="checkbox" name="comodidade" value="Piscina"> Piscina</label>
+                        <label class="check-item"><input type="checkbox" name="comodidade" value="Ar Condicionado"> Ar C.</label>
+                        <label class="check-item"><input type="checkbox" name="comodidade" value="Estacionamento"> Vaga</label>
+                        <label class="check-item"><input type="checkbox" name="comodidade" value="Cozinha"> Cozinha</label>
+                        <label class="check-item"><input type="checkbox" name="comodidade" value="Aceita Pets"> Pets</label>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label>Link da Foto (URL)</label>
+                    <input type="url" id="fotoUrl" placeholder="https://linkdafoto.com/imagem.jpg" required>
+                </div>
+
+                <button type="submit" id="btnPublicar" class="btn-principal">Publicar Agora</button>
             </form>
         </div>
     </div>
@@ -49,6 +75,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
         import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCmxZVNT7K8ZLV627XeKYRDJiViGw5OUCk",
@@ -61,49 +88,46 @@
 
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
+        const auth = getAuth(app);
 
-        const form = document.getElementById('formAnunciar');
-
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();
-
-            // 1. Verificar se o usuário está logado
-            const idDono = localStorage.getItem("idClienteLogado");
-            if (!idDono) {
+        onAuthStateChanged(auth, (user) => {
+            if (!user) {
                 alert("Você precisa estar logado para anunciar!");
                 window.location.href = "login.html";
-                return;
             }
+        });
 
-            // 2. Capturar comodidades
+        const form = document.getElementById('formAnunciar');
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('btnPublicar');
+            const user = auth.currentUser;
+            if (!user) return;
+
             const selecionados = Array.from(document.querySelectorAll('input[name="comodidade"]:checked'))
                                       .map(cb => cb.value);
 
-            // 3. Montar objeto (incluindo o ID do dono)
-           // Procure essa parte no seu script da anunciar.html
-const novoImovel = {
-    titulo: document.getElementById('titulo').value,
-    preco: Number(document.getElementById('preco').value),
-    descricao: document.getElementById('descricao').value,
-    foto: document.getElementById('fotoUrl').value,
-    comodidades: selecionados,
-    idDono: idDono,
-    dataCriacao: new Date(),
-    status: "pendente" // MUDAMOS DE "ativo" PARA "pendente"
-};
+            const novoImovel = {
+                titulo: document.getElementById('titulo').value,
+                endereco: document.getElementById('endereco').value, // SALVANDO ENDEREÇO
+                preco: Number(document.getElementById('preco').value),
+                descricao: document.getElementById('descricao').value,
+                foto: document.getElementById('fotoUrl').value,
+                comodidades: selecionados,
+                idDono: user.uid,
+                status: "pendente",
+                dataCriacao: new Date()
+            };
 
             try {
-                const btn = document.getElementById('btnPublicar');
                 btn.innerText = "Publicando...";
                 btn.disabled = true;
-
                 await addDoc(collection(db, "imoveis"), novoImovel);
-                
-                alert("Parabéns! Seu imóvel foi anunciado com sucesso.");
-                window.location.href = "index.html"; // Volta para a vitrine para ver o anúncio
+                alert("Anúncio enviado com sucesso!");
+                window.location.href = "index.html"; 
             } catch (error) {
-                console.error("Erro ao anunciar:", error);
-                alert("Erro ao publicar anúncio. Tente novamente.");
+                console.error("Erro ao publicar:", error);
+                alert("Erro ao publicar anúncio.");
                 btn.innerText = "Publicar Agora";
                 btn.disabled = false;
             }

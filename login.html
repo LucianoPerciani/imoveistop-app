@@ -3,33 +3,212 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - ImóveisTop</title>
-    <link rel="stylesheet" href="cadastrocli.css"> <!-- Reutilizamos o CSS do cadastro para manter o padrão -->
+    <title>Entrar ou Cadastrar | ImóveisTop</title>
+    <style>
+        :root {
+            --primary: #ff385c;
+            --dark: #222222;
+            --light: #f7f7f7;
+            --border: #dddddd;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--light); color: var(--dark); }
+
+        /* HEADER PADRONIZADO */
+        .main-header { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            padding: 10px 4%; 
+            background: #fff; 
+            border-bottom: 1px solid #eee; 
+        }
+        
+        .logo-container { display: flex; align-items: center; gap: 6px; text-decoration: none; }
+        .logo-text { font-weight: 800; font-size: 19px; color: #222; white-space: nowrap; }
+
+        .btn-voltar {
+            text-decoration: none;
+            color: #666;
+            font-size: 13px;
+            font-weight: 600;
+            padding: 7px 15px;
+            border-radius: 20px;
+            border: 1px solid #ddd;
+        }
+
+        /* FORMULÁRIO */
+        .login-container {
+            max-width: 400px;
+            margin: 40px auto;
+            padding: 30px;
+            background: white;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+
+        h2 { margin-bottom: 20px; font-size: 22px; text-align: center; }
+
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; font-size: 13px; font-weight: bold; margin-bottom: 5px; color: #444; }
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        /* Campo de nome escondido por padrão (aparece só no cadastro) */
+        #group-nome { display: none; }
+
+        .btn-acao {
+            width: 100%;
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .toggle-link {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 14px;
+            color: #717171;
+        }
+
+        .toggle-link span {
+            color: var(--primary);
+            cursor: pointer;
+            font-weight: bold;
+            text-decoration: underline;
+        }
+    </style>
 </head>
 <body>
+
     <header class="main-header">
-        <div class="header-content">
-            <a href="index.html" class="logo">🏠 ImóveisTop</a>
-            <nav><a href="index.html">Voltar</a></nav>
-        </div>
+        <a href="index.html" class="logo-container">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M3 9.5L12 3L21 9.5V20C21 20.5523 20.5523 21 20 21H14V14H10V21H4C3.44772 21 3 20.5523 3 20V9.5Z" stroke="#ff385c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M12 3V11" stroke="#ff385c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <span class="logo-text">Imóveis<span style="color: #ff385c;">Top</span></span>
+        </a>
+        <a href="index.html" class="btn-voltar">Voltar</a>
     </header>
 
-    <main class="auth-page">
-        <div class="cadastro-container">
-            <h2>Bem-vindo de volta!</h2>
-            <p>Acesse sua conta para ver seus favoritos.</p>
-            
-            <div class="form-group">
-                <input type="email" id="loginEmail" placeholder="Seu e-mail">
-                <input type="password" id="loginSenha" placeholder="Sua senha">
-                
-                <button class="btn-principal" id="btnEntrar">Entrar agora</button>
-            </div>
-            
-            <p class="footer-form">Ainda não tem conta? <a href="cadastrocli.html" style="color:#ff385c;">Cadastre-se</a></p>
+    <div class="login-container">
+        <h2 id="titulo-form">Entrar</h2>
+        
+        <div class="form-group" id="group-nome">
+            <label>Nome Completo</label>
+            <input type="text" id="nome" placeholder="Como quer ser chamado?">
         </div>
-    </main>
 
-    <script type="module" src="login.js"></script>
+        <div class="form-group">
+            <label>E-mail</label>
+            <input type="email" id="email" placeholder="seu@email.com">
+        </div>
+
+        <div class="form-group">
+            <label>Senha</label>
+            <input type="password" id="senha" placeholder="******">
+        </div>
+
+        <button class="btn-acao" id="btn-principal">Entrar</button>
+
+        <p class="toggle-link" id="alternar-texto">
+            Não tem uma conta? <span id="btn-alternar">Cadastre-se</span>
+        </p>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+        import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCmxZVNT7K8ZLV627XeKYRDJiViGw5OUCk",
+            authDomain: "cadastrocasas-50f8a.firebaseapp.com",
+            projectId: "cadastrocasas-50f8a",
+            storageBucket: "cadastrocasas-50f8a.firebasestorage.app",
+            messagingSenderId: "393041222159",
+            appId: "1:393041222159:web:c064df3b250abdb340e17a"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        let modoCadastro = false;
+
+        const btnPrincipal = document.getElementById('btn-principal');
+        const btnAlternar = document.getElementById('btn-alternar');
+        const tituloForm = document.getElementById('titulo-form');
+        const alternarTexto = document.getElementById('alternar-texto');
+        const groupNome = document.getElementById('group-nome');
+
+        btnAlternar.onclick = () => {
+            modoCadastro = !modoCadastro;
+            if (modoCadastro) {
+                tituloForm.innerText = "Criar Conta";
+                btnPrincipal.innerText = "Cadastrar";
+                groupNome.style.display = "block";
+                alternarTexto.innerHTML = 'Já tem conta? <span id="btn-alternar">Faça Login</span>';
+            } else {
+                tituloForm.innerText = "Entrar";
+                btnPrincipal.innerText = "Entrar";
+                groupNome.style.display = "none";
+                alternarTexto.innerHTML = 'Não tem uma conta? <span id="btn-alternar">Cadastre-se</span>';
+            }
+            document.getElementById('btn-alternar').onclick = btnAlternar.onclick;
+        };
+
+        btnPrincipal.onclick = async () => {
+            const email = document.getElementById('email').value;
+            const senha = document.getElementById('senha').value;
+            const nome = document.getElementById('nome').value;
+
+            if (!email || !senha) return alert("Preencha e-mail e senha!");
+            if (modoCadastro && !nome) return alert("Preencha seu nome!");
+
+            btnPrincipal.disabled = true;
+            btnPrincipal.innerText = "Processando...";
+
+            try {
+                if (modoCadastro) {
+                    // 1. Criar usuário no Auth
+                    const credencial = await createUserWithEmailAndPassword(auth, email, senha);
+                    const user = credencial.user;
+
+                    // 2. Salvar nome no Firestore vinculando ao UID do Auth
+                    await setDoc(doc(db, "usuarios", user.uid), {
+                        nome: nome,
+                        email: email,
+                        dataCadastro: new Date()
+                    });
+
+                    alert("Conta criada com sucesso!");
+                } else {
+                    // Apenas Login
+                    await signInWithEmailAndPassword(auth, email, senha);
+                }
+                window.location.href = "index.html";
+            } catch (error) {
+                console.error(error);
+                alert("Erro: " + error.message);
+                btnPrincipal.disabled = false;
+                btnPrincipal.innerText = modoCadastro ? "Cadastrar" : "Entrar";
+            }
+        };
+    </script>
 </body>
 </html>

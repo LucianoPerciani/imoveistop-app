@@ -1,84 +1,170 @@
-/* Estilos Gerais */
+/* 1. CONFIGURAÇÕES GERAIS */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+}
+
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #f0f2f5;
-    color: #333;
-    display: flex;
-    justify-content: center;
-    padding: 20px;
+    background-color: #f7f7f7;
+    color: #222;
+    line-height: 1.6;
 }
 
-.container {
-    max-width: 800px;
-    width: 100%;
+/* 2. HEADER PADRONIZADO (Igual à Index) */
+.main-header {
     background: #fff;
-    padding: 30px;
-    border-radius: 12px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    padding: 15px 20px;
+    border-bottom: 1px solid #ddd;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
 }
 
-h2 { color: #2c3e50; margin-bottom: 20px; text-align: center; }
-
-label { display: block; margin-top: 15px; font-weight: bold; font-size: 0.9em; }
-
-input, textarea {
-    width: 100%;
-    padding: 12px;
-    margin-top: 5px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    box-sizing: border-box; /* Evita que o input passe da borda */
-}
-
-.comodidades-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-    background: #f9f9f9;
-    padding: 15px;
-    border-radius: 8px;
-    margin-top: 10px;
-}
-
-button#btnSalvar {
-    width: 100%;
-    padding: 15px;
-    background-color: #3498db;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-size: 1.1em;
-    cursor: pointer;
-    margin-top: 25px;
-    transition: background 0.3s;
-}
-
-button#btnSalvar:hover { background-color: #2980b9; }
-
-/* Estilo da Lista de Gerenciamento */
-.admin-section { margin-top: 40px; }
-
-.item-gerenciamento {
+.header-content {
+    max-width: 1200px;
+    margin: 0 auto;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 15px;
-    background: #fff;
-    border: 1px solid #eee;
-    border-radius: 8px;
-    margin-bottom: 10px;
-    transition: 0.2s;
 }
 
+.logo {
+    text-decoration: none;
+    font-size: 22px;
+    font-weight: bold;
+    color: #ff385c;
+}
 
-.item-gerenciamento:hover { background: #fcfcfc; border-color: #3498db; }
+/* 3. CONTAINERS DE FORMULÁRIO */
+.container {
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+    min-height: 80vh;
+}
 
-.item-info { flex-grow: 1; }
+.form-box {
+    background: #fff;
+    width: 100%;
+    max-width: 500px;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    height: fit-content;
+}
 
-.btn-acoes { display: flex; gap: 8px; }
+h2 {
+    margin-bottom: 20px;
+    font-size: 24px;
+    color: #333;
+    text-align: center;
+}
 
-.btn-edit { background: #f1c40f; color: #000; border: none; padding: 8px 12px; border-radius: 5px; cursor: pointer; }
-.btn-del { background: #e74c3c; color: #fff; border: none; padding: 8px 12px; border-radius: 5px; cursor: pointer; }
+/* 4. INPUTS E LABELS */
+label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    font-size: 14px;
+    color: #444;
+}
 
-.btn-edit:hover { background: #d4ac0d; }
-.btn-del:hover { background: #c0392b; }
+input, textarea, select {
+    width: 100%;
+    padding: 14px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    font-size: 16px; /* Essencial para evitar zoom no iPhone */
+    outline: none;
+    transition: border-color 0.3s;
+}
+
+input:focus, textarea:focus {
+    border-color: #ff385c;
+}
+
+/* 5. GRID DE COMODIDADES (Checkboxes) */
+.comodidades-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* 2 colunas no celular */
+    gap: 12px;
+    background: #f9f9f9;
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+.check-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.check-item input {
+    width: auto;
+    margin-bottom: 0;
+}
+
+/* 6. BOTÕES */
+button, .btn-principal {
+    width: 100%;
+    padding: 16px;
+    background-color: #ff385c;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+button:hover, .btn-principal:hover {
+    background-color: #e31c5f;
+}
+
+/* 7. GERENCIAMENTO ADMIN (Lista de Imóveis) */
+.lista-admin {
+    width: 100%;
+    max-width: 800px;
+    margin-top: 30px;
+}
+
+.item-admin {
+    background: white;
+    padding: 15px;
+    border-radius: 12px;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+/* 8. RESPONSIVIDADE ADICIONAL */
+@media (max-width: 600px) {
+    .form-box {
+        padding: 20px;
+        box-shadow: none; /* Deixa o mobile mais limpo */
+        border-radius: 0;
+    }
+    
+    .container {
+        padding: 0; /* Aproveita 100% da largura no celular */
+    }
+
+    .comodidades-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (min-width: 768px) {
+    .comodidades-grid {
+        grid-template-columns: repeat(3, 1fr); /* 3 colunas em telas maiores */
+    }
+}

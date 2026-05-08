@@ -3,53 +3,311 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Painel Administrativo - Imóveis</title>
-    <link rel="stylesheet" href="stylecadastro.css">
-    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <title>Painel Admin Completo | ImóveisTop</title>
+    <style>
+        :root {
+            --primary: #ff385c;
+            --dark: #222222;
+            --light: #f7f7f7;
+            --gray: #717171;
+            --border: #dddddd;
+            --white: #ffffff;
+            --warning: #fff8e1; /* Cor de destaque para pendentes */
+            --success: #4caf50;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--light); color: var(--dark); padding-bottom: 50px; }
+
+        /* HEADER PADRONIZADO */
+        .main-header { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            padding: 10px 4%; 
+            background: #fff; 
+            border-bottom: 1px solid #eee; 
+            position: sticky; 
+            top: 0; 
+            z-index: 1000; 
+        }
+        
+        .logo-container { display: flex; align-items: center; gap: 6px; text-decoration: none; }
+        .logo-text { font-weight: 800; font-size: 19px; color: #222; white-space: nowrap; }
+
+        .btn-voltar {
+            text-decoration: none;
+            color: #666;
+            font-size: 13px;
+            font-weight: 600;
+            padding: 7px 15px;
+            border-radius: 20px;
+            border: 1px solid #ddd;
+            transition: 0.3s;
+        }
+        .btn-voltar:hover { background-color: #f7f7f7; color: var(--primary); border-color: var(--primary); }
+
+        /* DASHBOARD */
+        .container { max-width: 1200px; margin: 30px auto 0; padding: 0 20px; }
+        .grid-dashboard { display: grid; grid-template-columns: 1fr 1.2fr; gap: 25px; }
+
+        .card {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 25px;
+            border: 1px solid var(--border);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+            margin-bottom: 20px;
+        }
+
+        h2 { font-size: 14px; margin-bottom: 15px; color: var(--gray); text-transform: uppercase; letter-spacing: 1px; }
+
+        .form-cadastro { display: grid; gap: 12px; }
+        .form-cadastro input, .form-cadastro textarea {
+            width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 8px; outline: none; font-size: 14px;
+        }
+
+        .comodidades-label { font-size: 13px; font-weight: bold; margin-top: 10px; color: var(--dark); }
+        .comodidades-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        .comodidades-grid label {
+            font-size: 13px;
+            background: #fff;
+            border: 1px solid var(--border);
+            padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-postar {
+            background: var(--primary); color: white; border: none; padding: 15px;
+            border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.2s; font-size: 16px;
+        }
+
+        .scroll-area { max-height: 500px; overflow-y: auto; margin-bottom: 20px; }
+        
+        /* ITEM LISTA COM DESTAQUE */
+        .item-lista {
+            display: flex; align-items: center; gap: 12px; padding: 12px;
+            border-bottom: 1px solid #eee;
+            transition: 0.3s;
+        }
+        
+        /* CLASSE DE DESTAQUE PARA PENDENTES */
+        .item-pendente {
+            background-color: var(--warning);
+            border-left: 4px solid #ffc107;
+        }
+
+        .img-mini { width: 50px; height: 50px; border-radius: 6px; object-fit: cover; }
+        .info-mini { flex: 1; }
+        .info-mini strong { display: block; font-size: 14px; }
+        .info-mini span { font-size: 12px; color: var(--gray); }
+        .badge-pendente { font-size: 10px; background: #ffc107; padding: 2px 6px; border-radius: 4px; font-weight: bold; }
+
+        .btn-group { display: flex; gap: 5px; }
+        .btn-del { background: #fff1f0; color: #ff4d4f; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 11px; font-weight: bold; }
+        .btn-aprovar { background: #e8f5e9; color: var(--success); border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 11px; font-weight: bold; }
+
+        @media (max-width: 900px) { 
+            .grid-dashboard { grid-template-columns: 1fr; }
+            .main-header { padding: 10px 2%; }
+        }
+    </style>
 </head>
 <body>
 
+    <header class="main-header">
+        <a href="index.html" class="logo-container">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M3 9.5L12 3L21 9.5V20C21 20.5523 20.5523 21 20 21H14V14H10V21H4C3.44772 21 3 20.5523 3 20V9.5Z" stroke="#ff385c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M12 3V11" stroke="#ff385c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <span class="logo-text">Imóveis<span style="color: #ff385c;">Top</span></span>
+        </a>
+
+        <nav>
+            <a href="index.html" class="btn-voltar">Voltar</a>
+        </nav>
+    </header>
+
     <div class="container">
-        <div class="form-box">
-           <a href="index.html" style="text-decoration:none; color:#e74c3c; font-weight:bold;">⬅ Sair e Ver Vitrine</a> 
-            <h2>🏠 Cadastrar / Editar Imóvel</h2>
-            <form id="formCadastro">
-                <label>Título do Anúncio</label>
-                <input type="text" id="titulo" placeholder="Ex: Casa aconchegante no centro" required>
+        <div class="grid-dashboard">
+            
+            <div class="card">
+                <h2>Cadastrar Imóvel</h2>
+                <div class="form-cadastro">
+                    <input type="text" id="cadTitulo" placeholder="Título do Anúncio">
+                    <input type="text" id="cadEndereco" placeholder="Endereço Completo">
+                    
+                    <div style="display: flex; gap: 10px;">
+                        <input type="number" id="cadPreco" placeholder="R$ Noite">
+                        <input type="text" id="cadFoto" placeholder="Link da Foto">
+                    </div>
 
-                <label>Preço da Diária (R$)</label>
-                <input type="number" id="preco" placeholder="150" required>
+                    <textarea id="cadDesc" placeholder="Descrição do imóvel..." rows="3"></textarea>
 
-                <label>Descrição</label>
-                <textarea id="descricao" rows="4" placeholder="Conte detalhes sobre o espaço..."></textarea>
-                
-                <label>O que o imóvel oferece?</label>
-                <div class="comodidades-grid">
-                    <label class="check-item"><input type="checkbox" name="comodidade" value="Wi-Fi"> Wi-Fi</label>
-                    <label class="check-item"><input type="checkbox" name="comodidade" value="Piscina"> Piscina</label>
-                    <label class="check-item"><input type="checkbox" name="comodidade" value="Ar Condicionado"> Ar Condicionado</label>
-                    <label class="check-item"><input type="checkbox" name="comodidade" value="Estacionamento"> Estacionamento</label>
-                    <label class="check-item"><input type="checkbox" name="comodidade" value="Cozinha"> Cozinha</label>
-                    <label class="check-item"><input type="checkbox" name="comodidade" value="Aceita Pets"> Pets</label>
+                    <p class="comodidades-label">Comodidades:</p>
+                    <div class="comodidades-grid">
+                        <label><input type="checkbox" name="comod" value="Wi-Fi"> Wi-Fi</label>
+                        <label><input type="checkbox" name="comod" value="Piscina"> Piscina</label>
+                        <label><input type="checkbox" name="comod" value="Ar Condicionado"> Ar-cond.</label>
+                        <label><input type="checkbox" name="comod" value="Cozinha"> Cozinha</label>
+                        <label><input type="checkbox" name="comod" value="Garagem"> Garagem</label>
+                        <label><input type="checkbox" name="comod" value="Pet Friendly"> Aceita Pets</label>
+                    </div>
+                    
+                    <button class="btn-postar" id="btnSalvar">Publicar Agora</button>
+                    <small style="color: gray; font-size: 11px; text-align: center;">* Novos imóveis precisam de aprovação.</small>
                 </div>
-
-                <label>Link da Foto (URL)</label>
-                <input type="url" id="fotoUrl" placeholder="https://exemplo.com/foto.jpg" required>
-
-                <button type="submit" id="btnSalvar">Publicar Anúncio</button>
-            </form>
-        </div>
-
-        <div class="admin-section">
-            <hr>
-            <h2>📋 Gerenciar Meus Imóveis</h2>
-            <div id="listaGerenciamento" class="lista-admin">
-                <!-- Os itens de gerenciamento aparecem aqui -->
-                <p>Carregando lista...</p>
             </div>
+
+            <div class="card">
+                <h2>Gerenciar Imóveis</h2>
+                <div id="listaGeral" class="scroll-area">Carregando...</div>
+                
+                <h2>Base de Clientes</h2>
+                <div id="listaUsuarios" class="scroll-area">Carregando...</div>
+            </div>
+
         </div>
     </div>
 
-    <script type="module" src="cadastro.js"></script>
+   <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getFirestore, collection, addDoc, getDocs, doc, deleteDoc, updateDoc, query } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyCmxZVNT7K8ZLV627XeKYRDJiViGw5OUCk",
+        authDomain: "cadastrocasas-50f8a.firebaseapp.com",
+        projectId: "cadastrocasas-50f8a",
+        storageBucket: "cadastrocasas-50f8a.firebasestorage.app",
+        messagingSenderId: "393041222159",
+        appId: "1:393041222159:web:c064df3b250abdb340e17a"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    window.onload = () => { carregarDados(); };
+
+    async function carregarDados() {
+        carregarImoveis();
+        carregarUsuarios();
+    }
+
+    // CADASTRO: Agora salvamos com status pendente por padrão
+    document.getElementById('btnSalvar').onclick = async () => {
+        const btn = document.getElementById('btnSalvar');
+        const selecionados = Array.from(document.querySelectorAll('input[name="comod"]:checked')).map(cb => cb.value);
+
+        const dados = {
+            titulo: document.getElementById('cadTitulo').value,
+            endereco: document.getElementById('cadEndereco').value,
+            preco: document.getElementById('cadPreco').value,
+            foto: document.getElementById('cadFoto').value,
+            descricao: document.getElementById('cadDesc').value,
+            comodidades: selecionados,
+            status: "pendente", 
+            dataCriacao: new Date()
+        };
+
+        if(!dados.titulo || !dados.preco) return alert("Preencha o título e o preço!");
+
+        btn.disabled = true;
+        btn.innerText = "Salvando...";
+
+        try {
+            await addDoc(collection(db, "imoveis"), dados);
+            alert("Imóvel enviado para a lista (pendente de aprovação)!");
+            location.reload();
+        } catch (err) {
+            alert("Erro ao salvar.");
+            btn.disabled = false;
+            btn.innerText = "Publicar Agora";
+        }
+    };
+
+    async function carregarImoveis() {
+        const box = document.getElementById('listaGeral');
+        try {
+            // Removido o orderBy para garantir que imóveis antigos sem data apareçam
+            const q = query(collection(db, "imoveis")); 
+            const snap = await getDocs(q);
+            
+            if (snap.empty) {
+                box.innerHTML = "<p style='font-size:12px; color:gray; padding:10px;'>Nenhum imóvel cadastrado.</p>";
+                return;
+            }
+
+            box.innerHTML = "";
+            snap.forEach(docu => {
+                const im = docu.data();
+                // Se o imóvel não tiver status (os antigos), tratamos como 'ativo'
+                const status = im.status || "ativo";
+                const isPendente = status === "pendente";
+                
+                box.innerHTML += `
+                    <div class="item-lista ${isPendente ? 'item-pendente' : ''}">
+                        <img src="${im.foto || 'https://via.placeholder.com/50'}" class="img-mini">
+                        <div class="info-mini">
+                            <strong>${im.titulo || 'Sem título'} ${isPendente ? '<span class="badge-pendente">PENDENTE</span>' : ''}</strong>
+                            <span>${im.endereco || 'Sem endereço'}</span>
+                        </div>
+                        <div class="btn-group">
+                            ${isPendente ? `<button class="btn-aprovar" onclick="window.aprovar('${docu.id}')">Aprovar</button>` : ''}
+                            <button class="btn-del" onclick="window.remover('${docu.id}')">Excluir</button>
+                        </div>
+                    </div>`;
+            });
+        } catch(e) { 
+            console.error(e);
+            box.innerHTML = "<p style='font-size:12px; color:red; padding:10px;'>Erro ao carregar lista.</p>"; 
+        }
+    }
+
+    window.aprovar = async (id) => {
+        if(confirm("Deseja aprovar este imóvel?")) {
+            try {
+                const imovelRef = doc(db, "imoveis", id);
+                await updateDoc(imovelRef, { status: "ativo" });
+                alert("Imóvel aprovado!");
+                carregarImoveis();
+            } catch(e) { alert("Erro ao aprovar."); }
+        }
+    };
+
+    async function carregarUsuarios() {
+        const box = document.getElementById('listaUsuarios');
+        try {
+            const querySnapshot = await getDocs(collection(db, "usuarios"));
+            box.innerHTML = "";
+            querySnapshot.forEach(u => {
+                const user = u.data();
+                box.innerHTML += `
+                    <div class="info-mini" style="padding: 10px; border-bottom: 1px solid #eee;">
+                        <strong>${user.nome || 'Usuário sem nome'}</strong>
+                        <span style="font-size: 11px; color: #717171;">${user.email || 'E-mail não informado'}</span>
+                    </div>`;
+            });
+        } catch(e) { box.innerHTML = "..."; }
+    }
+
+    window.remover = async (id) => {
+        if(confirm("Remover anúncio?")) {
+            try {
+                await deleteDoc(doc(db, "imoveis", id));
+                carregarImoveis();
+            } catch(e) { alert("Erro ao excluir."); }
+        }
+    };
+</script>
 </body>
 </html>

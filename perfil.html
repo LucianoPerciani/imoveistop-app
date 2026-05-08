@@ -3,61 +3,116 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Meu Perfil - ImóveisTop</title>
-    <link rel="stylesheet" href="stylecadastro.css"> <!-- Reutilizando seu estilo base -->
+    <title>Meu Perfil | ImóveisTop</title>
     <style>
-        body { font-family: 'Segoe UI', sans-serif; background: #f9f9f9; }
-        .container-perfil { max-width: 1000px; margin: 30px auto; padding: 20px; }
-        .user-section { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); margin-bottom: 30px; }
-        .user-section h2 { color: #ff385c; border-bottom: 2px solid #fef2f4; padding-bottom: 10px; margin-bottom: 20px; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
+        body { background-color: #f7f7f7; color: #222; }
         
-        /* Grid de cards compactos para o perfil */
-        .grid-perfil { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px; }
-        .card-mini { border: 1px solid #eee; border-radius: 10px; overflow: hidden; background: #fff; position: relative; }
-        .card-mini img { width: 100%; height: 140px; object-fit: cover; }
-        .card-mini-info { padding: 10px; }
-        .card-mini-info h4 { margin: 0; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        header { background: white; padding: 15px 5%; border-bottom: 1px solid #ddd; display: flex; justify-content: space-between; align-items: center; }
+        .logo { color: #ff385c; font-weight: bold; text-decoration: none; font-size: 22px; }
         
-        .status-badge { position: absolute; top: 10px; left: 10px; padding: 4px 8px; border-radius: 5px; font-size: 10px; font-weight: bold; color: white; }
-        .status-pendente { background: #ffa500; }
-        .status-ativo { background: #27ae60; }
+        .container { max-width: 1000px; margin: 30px auto; padding: 0 20px; }
+        h1 { margin-bottom: 20px; }
+        
+        .secao { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); margin-bottom: 30px; }
+        h2 { font-size: 18px; margin-bottom: 15px; border-bottom: 2px solid #eee; padding-bottom: 10px; }
 
-        .btn-excluir-anuncio { background: #ff385c; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; font-size: 12px; margin-top: 10px; width: 100%; }
+        /* Grid de Cards Pequenos */
+        .grid-perfil { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; }
         
+        .card-mini { position: relative; border: 1px solid #ddd; border-radius: 10px; overflow: hidden; background: #fff; }
+        .card-mini img { width: 100%; height: 120px; object-fit: cover; }
+        .card-mini-info { padding: 10px; }
+        .card-mini-info h4 { font-size: 14px; margin-bottom: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+        /* Status e Botões */
+        .status-badge { position: absolute; top: 5px; left: 5px; padding: 3px 7px; border-radius: 5px; font-size: 10px; font-weight: bold; color: white; }
+        .status-ativo { background: #27ae60; }
+        .status-pendente { background: #ffa500; }
+        
+        .btn-excluir-anuncio { width: 100%; background: #ff385c; color: white; border: none; padding: 6px; border-radius: 5px; cursor: pointer; font-size: 12px; margin-top: 5px; }
         .empty-msg { color: #888; font-style: italic; font-size: 14px; }
-        .btn-voltar { display: inline-block; margin-bottom: 20px; text-decoration: none; color: #ff385c; font-weight: bold; }
+        
+        .btn-home { text-decoration: none; color: #666; font-weight: bold; }
+/* Container do perfil no cabeçalho */
+.user-menu {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+/* O Círculo do Perfil */
+.avatar-circle {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #ff385c;
+    /* Cor do seu tema */
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    text-decoration: none;
+    cursor: pointer;
+    overflow: hidden;
+    border: 2px solid transparent;
+    transition: 0.3s;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.avatar-circle:hover {
+    border-color: #ff385c;
+    transform: scale(1.05);
+}
+
+.avatar-circle img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
     </style>
 </head>
 <body>
 
-    <div class="container-perfil">
-        <a href="index.html" class="btn-voltar">⬅ Voltar para a Vitrine</a>
-        
-        <header style="margin-bottom: 30px;">
-            <h1 id="boasVindas">Olá, Carregando...</h1>
-            <p>Gerencie seus anúncios e seus imóveis favoritos aqui.</p>
-        </header>
+    <header>
+<div style="display: flex; align-items: center; gap: 10px;">
+    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M3 9.5L12 3L21 9.5V20C21 20.5523 20.5523 21 20 21H14V14H10V21H4C3.44772 21 3 20.5523 3 20V9.5Z" stroke="#ff385c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M12 3V11" stroke="#ff385c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M9 6L12 3L15 6" stroke="#ff385c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    
+    <span style="font-family: 'Inter', sans-serif; font-weight: 800; font-size: 22px; color: #222;">
+        Imóveis<span style="color: #ff385c;">Top</span>
+    </span>
+</div>
 
-        <!-- Seção: Meus Anúncios -->
-        <section class="user-section">
-            <h2>🏠 Meus Anúncios</h2>
+        <a href="index.html" class="btn-home">Voltar ao início</a>
+    </header>
+
+    <div class="container">
+        <h1 id="boasVindas">Carregando...</h1>
+
+        <div class="secao">
+            <h2>Meus Anúncios</h2>
             <div id="meusAnunciosLista" class="grid-perfil">
-                <p class="empty-msg">Buscando seus anúncios...</p>
+                <p class="empty-msg">Buscando seus imóveis...</p>
             </div>
-        </section>
+        </div>
 
-        <!-- Seção: Favoritos -->
-        <section class="user-section">
-            <h2>❤ Meus Favoritos</h2>
+        <div class="secao">
+            <h2>Meus Favoritos ❤️</h2>
             <div id="meusFavoritosLista" class="grid-perfil">
-                <p class="empty-msg">Carregando seus favoritos...</p>
+                <p class="empty-msg">Carregando favoritos...</p>
             </div>
-        </section>
+        </div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-        import { getFirestore, collection, query, where, getDocs, doc, getDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+        import { getFirestore, collection, query, where, getDocs, doc, getDoc, deleteDoc, updateDoc, arrayRemove } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCmxZVNT7K8ZLV627XeKYRDJiViGw5OUCk",
@@ -70,96 +125,116 @@
 
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
+        const auth = getAuth(app);
 
-        const idClienteLogado = localStorage.getItem("idClienteLogado");
-
-        if (!idClienteLogado) {
-            alert("Você precisa estar logado para ver seu perfil.");
-            window.location.href = "login.html";
-        }
-
-        async function inicializarPerfil() {
-            // 1. Carregar Dados do Usuário (Nome)
-            const userSnap = await getDoc(doc(db, "clientes", idClienteLogado));
-            if (userSnap.exists()) {
-                document.getElementById('boasVindas').innerText = `Olá, ${userSnap.data().nome}!`;
-                const favoritosIds = userSnap.data().favoritos || [];
-                carregarFavoritos(favoritosIds);
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                try {
+                    const userRef = doc(db, "usuarios", user.uid);
+                    const userSnap = await getDoc(userRef);
+                    
+                    if (userSnap.exists()) {
+                        const dados = userSnap.data();
+                        const nomeFull = dados.nome || "Usuário";
+                        document.getElementById('boasVindas').innerText = `Olá, ${nomeFull.split(' ')[0]}!`;
+                        carregarFavoritos(dados.favoritos || []);
+                    } else {
+                        document.getElementById('boasVindas').innerText = `Olá!`;
+                        carregarFavoritos([]);
+                    }
+                    carregarMeusAnuncios(user.uid);
+                } catch (error) {
+                    console.error("Erro ao carregar perfil:", error);
+                }
+            } else {
+                window.location.href = "login.html";
             }
+        });
 
-            carregarMeusAnuncios();
-        }
-
-        // 2. Carregar Anúncios que EU criei
-        async function carregarMeusAnuncios() {
+        async function carregarMeusAnuncios(uid) {
             const lista = document.getElementById('meusAnunciosLista');
-            const q = query(collection(db, "imoveis"), where("idDono", "==", idClienteLogado));
-            const querySnapshot = await getDocs(q);
-            
-            lista.innerHTML = "";
-            if (querySnapshot.empty) {
-                lista.innerHTML = "<p class='empty-msg'>Você ainda não anunciou nenhum imóvel.</p>";
-                return;
-            }
+            try {
+                const q = query(collection(db, "imoveis"), where("idDono", "==", uid));
+                const querySnapshot = await getDocs(q);
+                
+                lista.innerHTML = "";
+                if (querySnapshot.empty) {
+                    lista.innerHTML = "<p class='empty-msg'>Você ainda não anunciou nenhum imóvel.</p>";
+                    return;
+                }
 
-            querySnapshot.forEach((documento) => {
-                const imovel = documento.data();
-                const id = documento.id;
-                const statusClass = imovel.status === "ativo" ? "status-ativo" : "status-pendente";
-                const statusTexto = imovel.status === "ativo" ? "PUBLICADO" : "PENDENTE";
+                querySnapshot.forEach((documento) => {
+                    const imovel = documento.data();
+                    const id = documento.id;
+                    const statusClass = imovel.status === "ativo" ? "status-ativo" : "status-pendente";
+                    const statusTexto = imovel.status === "ativo" ? "Ativo" : "Pendente";
 
-                lista.innerHTML += `
-                    <div class="card-mini" id="meu-anuncio-${id}">
-                        <span class="status-badge ${statusClass}">${statusTexto}</span>
-                        <img src="${imovel.foto}">
-                        <div class="card-mini-info">
-                            <h4>${imovel.titulo}</h4>
-                            <button class="btn-excluir-anuncio" onclick="excluirMeuAnuncio('${id}')">Excluir</button>
-                        </div>
-                    </div>
-                `;
-            });
-        }
-
-        // 3. Carregar Favoritos
-        async function carregarFavoritos(ids) {
-            const lista = document.getElementById('meusFavoritosLista');
-            lista.innerHTML = "";
-
-            if (ids.length === 0) {
-                lista.innerHTML = "<p class='empty-msg'>Sua lista de favoritos está vazia.</p>";
-                return;
-            }
-
-            // Para cada ID nos favoritos, buscar o detalhe do imóvel
-            for (const id of ids) {
-                const docRef = doc(db, "imoveis", id);
-                const docSnap = await getDoc(docRef);
-                if (docSnap.exists()) {
-                    const imovel = docSnap.data();
                     lista.innerHTML += `
-                        <div class="card-mini">
-                            <img src="${imovel.foto}">
+                        <div class="card-mini" id="card-${id}">
+                            <span class="status-badge ${statusClass}">${statusTexto}</span>
+                            <img src="${imovel.foto || 'https://via.placeholder.com/200'}">
                             <div class="card-mini-info">
                                 <h4>${imovel.titulo}</h4>
-                                <p style="font-size:12px; color:#ff385c; font-weight:bold;">R$ ${imovel.preco}</p>
+                                <button class="btn-excluir-anuncio" onclick="window.excluirAnuncio('${id}')">Excluir</button>
                             </div>
                         </div>
                     `;
-                }
+                });
+            } catch (e) {
+                lista.innerHTML = "<p class='empty-msg'>Erro ao carregar anúncios.</p>";
             }
         }
 
-        // Função para excluir anúncio (vazada para o escopo global)
-        window.excluirMeuAnuncio = async (id) => {
-            if (confirm("Tem certeza que deseja excluir seu anúncio?")) {
-                await deleteDoc(doc(db, "imoveis", id));
-                alert("Anúncio removido!");
-                carregarMeusAnuncios();
+        async function carregarFavoritos(ids) {
+            const lista = document.getElementById('meusFavoritosLista');
+            lista.innerHTML = "";
+            
+            if (!ids || ids.length === 0) {
+                lista.innerHTML = "<p class='empty-msg'>Nenhum favorito salvo.</p>";
+                return;
+            }
+
+            try {
+                const promessas = ids.map(id => getDoc(doc(db, "imoveis", id)));
+                const resultados = await Promise.all(promessas);
+
+                let temFavoritoValido = false;
+                resultados.forEach((docSnap) => {
+                    if (docSnap.exists()) {
+                        temFavoritoValido = true;
+                        const imovel = docSnap.data();
+                        lista.innerHTML += `
+                            <div class="card-mini">
+                                <img src="${imovel.foto || 'https://via.placeholder.com/200'}">
+                                <div class="card-mini-info">
+                                    <h4>${imovel.titulo}</h4>
+                                    <p style="font-size:12px; color:#ff385c; font-weight:bold;">R$ ${Number(imovel.preco).toLocaleString('pt-BR')}</p>
+                                </div>
+                            </div>
+                        `;
+                    }
+                });
+
+                if (!temFavoritoValido) {
+                    lista.innerHTML = "<p class='empty-msg'>Seus favoritos não estão mais disponíveis.</p>";
+                }
+            } catch (e) {
+                lista.innerHTML = "<p class='empty-msg'>Erro ao carregar favoritos.</p>";
+            }
+        }
+
+        window.excluirAnuncio = async (id) => {
+            if (confirm("Deseja realmente remover este anúncio definitivamente?")) {
+                try {
+                    await deleteDoc(doc(db, "imoveis", id));
+                    const elemento = document.getElementById(`card-${id}`);
+                    if (elemento) elemento.remove();
+                    alert("Anúncio removido com sucesso!");
+                } catch (e) { 
+                    alert("Erro ao excluir o anúncio."); 
+                }
             }
         };
-
-        inicializarPerfil();
     </script>
 </body>
 </html>
