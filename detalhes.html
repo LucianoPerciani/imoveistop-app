@@ -1,158 +1,114 @@
 <!DOCTYPE html>
 <html lang="pt-br">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Detalhes do Imóvel - ImóveisTop</title>
+    <title>Detalhes do Imóvel | ImóveisTop</title>
     <style>
         :root {
             --primary: #ff385c;
             --dark: #222222;
-            --light: #f7f7f7;
+            --gray: #717171;
             --border: #dddddd;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
-        body { background-color: var(--light); color: var(--dark); }
+        body { background: #fff; color: var(--dark); padding-top: 80px; }
 
-        /* HEADER PADRONIZADO */
-        .main-header {
+        /* Header Padrão */
+        header {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            height: 70px;
+            background: white;
+            border-bottom: 1px solid var(--border);
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            padding: 10px 4%;
-            background: #fff;
-            border-bottom: 1px solid #eee;
-            position: sticky;
-            top: 0;
+            justify-content: space-between;
+            padding: 0 5%;
             z-index: 1000;
         }
 
-        .logo-container { display: flex; align-items: center; gap: 6px; text-decoration: none; }
-        .logo-text { font-weight: 800; font-size: 19px; color: #222; white-space: nowrap; }
-
+        .logo { font-weight: 800; font-size: 20px; color: var(--primary); text-decoration: none; }
+        
         .btn-voltar {
+            background: var(--dark);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 8px;
             text-decoration: none;
-            color: #666;
-            font-size: 13px;
+            font-size: 14px;
             font-weight: 600;
-            padding: 7px 15px;
-            border-radius: 20px;
-            border: 1px solid #ddd;
-            transition: 0.2s;
+            transition: 0.3s;
         }
-        .btn-voltar:hover { background-color: #f1f1f1; }
+        .btn-voltar:hover { opacity: 0.8; }
 
-        /* PÁGINA DE DETALHES */
-        .container-detalhe { max-width: 900px; margin: 20px auto; padding: 0 20px; }
-
-        .foto-principal {
+        .container { max-width: 1000px; margin: 0 auto; padding: 20px; }
+        
+        /* Slider Principal */
+        .slider-container {
+            position: relative;
             width: 100%;
-            height: 450px;
-            object-fit: cover;
-            border-radius: 15px;
-            background: #eee;
+            height: 500px;
+            background: #f7f7f7;
+            border-radius: 12px;
+            overflow: hidden;
         }
+        .slider { display: flex; height: 100%; transition: transform 0.4s ease; }
+        .slider img { width: 100%; height: 100%; object-fit: cover; flex-shrink: 0; }
 
-        .galeria-miniaturas {
+        /* Miniaturas */
+        .thumbnails {
             display: flex;
             gap: 10px;
-            margin-top: 10px;
+            margin-top: 15px;
             overflow-x: auto;
-            padding-bottom: 10px;
+            padding-bottom: 5px;
         }
-
-        .mini-foto {
-            width: 120px;
-            height: 80px;
-            object-fit: cover;
-            border-radius: 8px;
+        .thumb-item {
+            width: 80px;
+            height: 60px;
+            border-radius: 6px;
             cursor: pointer;
+            object-fit: cover;
+            opacity: 0.6;
             border: 2px solid transparent;
-            transition: 0.2s;
-            flex-shrink: 0;
         }
-        .mini-foto:hover { border-color: var(--primary); }
+        .thumb-item.active { opacity: 1; border-color: var(--primary); }
 
-        .info-box {
-            margin-top: 25px;
-            background: white;
-            padding: 25px;
-            border-radius: 15px;
-            border: 1px solid #eee;
-        }
-
-        .preco-box { font-size: 24px; font-weight: bold; color: #222; }
-        .descricao { line-height: 1.6; color: #444; margin: 20px 0; }
-        .badge { background: #f0f0f0; padding: 6px 12px; border-radius: 20px; font-size: 14px; margin-right: 8px; border: 1px solid #ddd; }
-
-        .btn-reserva {
-            display: block;
-            text-align: center;
-            background: #25d366;
-            color: white;
-            text-decoration: none;
-            padding: 15px;
+        .info-section { margin-top: 30px; display: grid; grid-template-columns: 1fr 350px; gap: 40px; }
+        
+        .price-card {
+            border: 1px solid var(--border);
+            padding: 24px;
             border-radius: 12px;
-            font-weight: bold;
-            font-size: 18px;
-            margin: 30px 0;
+            box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+            height: fit-content;
         }
 
-        #loader, #msg-erro { text-align: center; padding: 50px; color: #717171; }
+        .map-box {
+            margin-top: 40px;
+            border-top: 1px solid var(--border);
+            padding-top: 30px;
+        }
+        iframe { width: 100%; border-radius: 12px; border: none; height: 350px; }
+
+        @media (max-width: 768px) {
+            .info-section { grid-template-columns: 1fr; }
+            .slider-container { height: 300px; }
+        }
     </style>
 </head>
-
 <body>
 
-    <header class="main-header">
-        <a href="index.html" class="logo-container">
-            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M3 9.5L12 3L21 9.5V20C21 20.5523 20.5523 21 20 21H14V14H10V21H4C3.44772 21 3 20.5523 3 20V9.5Z" stroke="#ff385c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
-                <path d="M12 3V11" stroke="#ff385c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
-            </svg>
-            <span class="logo-text">Imóveis<span style="color: #ff385c;">Top</span></span>
-        </a>
+    <header>
+        <a href="index.html" class="logo">🏠 ImóveisTop</a>
         <a href="index.html" class="btn-voltar">Voltar</a>
     </header>
 
-    <main class="container-detalhe">
-        <div id="loader">Carregando informações do imóvel...</div>
-
-        <div id="conteudo-imovel" style="display: none;">
-            <!-- Foto Grande -->
-            <img id="imovel-foto-principal" src="" class="foto-principal">
-
-            <!-- Galeria -->
-            <div id="galeria-miniaturas" class="galeria-miniaturas"></div>
-
-            <div class="info-box">
-                <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-                    <div>
-                        <h1 id="imovel-titulo" style="margin:0;"></h1>
-                        <p id="imovel-local" style="color: #717171; margin-top: 5px;"></p>
-                    </div>
-                    <div class="preco-box">R$ <span id="imovel-preco"></span> <span style="font-size:14px; font-weight:normal;">/ noite</span></div>
-                </div>
-
-                <hr style="border:0; border-top: 1px solid #eee; margin: 25px 0;">
-
-                <h3>O que este lugar oferece</h3>
-                <div id="imovel-comodidades" style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px;"></div>
-
-                <h3 style="margin-top: 25px;">Descrição</h3>
-                <p id="imovel-descricao" class="descricao"></p>
-
-                <a id="link-whats" href="#" target="_blank" class="btn-reserva">Reservar agora pelo WhatsApp</a>
-            </div>
-        </div>
-
-        <div id="msg-erro" style="display: none;">
-            <h2>Ops! Imóvel não encontrado.</h2>
-            <a href="index.html" style="color: #ff385c;">Voltar para a página inicial</a>
-        </div>
-    </main>
+    <div class="container" id="conteudo-imovel">
+        <p>Carregando imóvel incrível...</p>
+    </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
@@ -169,65 +125,64 @@
 
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
-        const id = new URLSearchParams(window.location.search).get('id');
 
-        async function carregar() {
-            if (!id) { mostrarErro(); return; }
+        const params = new URLSearchParams(window.location.search);
+        const idImovel = params.get('id');
 
-            try {
-                const snap = await getDoc(doc(db, "imoveis", id));
-                if (snap.exists()) {
-                    const dados = snap.data();
-                    const fotoPrincipal = document.getElementById('imovel-foto-principal');
-                    const galeria = document.getElementById('galeria-miniaturas');
+        async function carregarDetalhes() {
+            if (!idImovel) return;
 
-                    // Lógica para múltiplas fotos (Array)
-                    if (dados.fotos && Array.isArray(dados.fotos) && dados.fotos.length > 0) {
-                        fotoPrincipal.src = dados.fotos[0];
-                        dados.fotos.forEach(url => {
-                            const img = document.createElement('img');
-                            img.src = url;
-                            img.className = 'mini-foto';
-                            img.onclick = () => fotoPrincipal.src = url;
-                            galeria.appendChild(img);
-                        });
-                    } else {
-                        // Se não tiver o array de fotos, usa a foto única antiga
-                        fotoPrincipal.src = dados.foto || 'https://via.placeholder.com/800x450';
-                        galeria.style.display = 'none';
-                    }
+            const docSnap = await getDoc(doc(db, "imoveis", idImovel));
 
-                    document.getElementById('imovel-titulo').innerText = dados.titulo;
-                    document.getElementById('imovel-local').innerText = "📍 " + (dados.endereco || "Localização não informada");
-                    document.getElementById('imovel-preco').innerText = dados.preco;
-                    document.getElementById('imovel-descricao').innerText = dados.descricao || "Sem descrição disponível.";
+            if (docSnap.exists()) {
+                const im = docSnap.data();
+                const fotos = im.fotos || [im.foto];
+                
+                let slides = fotos.map(url => `<img src="${url}">`).join('');
+                let thumbs = fotos.map((url, i) => `<img src="${url}" class="thumb-item ${i===0?'active':''}" onclick="mudarSlide(${i})">`).join('');
 
-                    const comContainer = document.getElementById('imovel-comodidades');
-                    if (dados.comodidades) {
-                        dados.comodidades.forEach(c => {
-                            comContainer.innerHTML += `<span class="badge">${c}</span>`;
-                        });
-                    }
+                document.getElementById('conteudo-imovel').innerHTML = `
+                    <div class="slider-container">
+                        <div class="slider" id="mainSlider">${slides}</div>
+                    </div>
+                    <div class="thumbnails">${thumbs}</div>
 
-                    document.getElementById('link-whats').href = `https://wa.me/5519999859655?text=Olá! Gostaria de informações sobre o imóvel: ${dados.titulo}`;
-                    
-                    document.getElementById('loader').style.display = 'none';
-                    document.getElementById('conteudo-imovel').style.display = 'block';
-                } else {
-                    mostrarErro();
-                }
-            } catch (e) {
-                console.error(e);
-                mostrarErro();
+                    <div class="info-section">
+                        <div>
+                            <h1 style="font-size: 32px; margin-bottom: 10px;">${im.titulo}</h1>
+                            <p style="color: var(--gray); font-size: 18px; margin-bottom: 20px;">📍 ${im.endereco}</p>
+                            <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
+                            <h3>Descrição</h3>
+                            <p style="line-height: 1.6; color: #444; margin-top: 10px;">${im.descricao || 'Sem descrição.'}</p>
+                        </div>
+                        
+                        <div class="price-card">
+                            <p style="font-size: 24px; font-weight: 700;">R$ ${im.preco} <span style="font-weight: 400; font-size: 16px;">/ noite</span></p>
+                            <button style="width: 100%; background: var(--primary); color: white; border: none; padding: 15px; border-radius: 8px; margin-top: 20px; font-weight: bold; cursor: pointer;">Reservar Agora</button>
+                        </div>
+                    </div>
+
+                    <div class="map-box">
+                        <h3>Localização</h3>
+                        <p style="margin-bottom: 15px; color: var(--gray);">Este é o local aproximado do imóvel.</p>
+                        <iframe src="https://maps.google.com/maps?q=${encodeURIComponent(im.endereco)}&t=&z=15&ie=UTF8&iwloc=&output=embed"></iframe>
+                    </div>
+                `;
             }
         }
 
-        function mostrarErro() {
-            document.getElementById('loader').style.display = 'none';
-            document.getElementById('msg-erro').style.display = 'block';
-        }
+        // Função global para o clique na miniatura
+        window.mudarSlide = (index) => {
+            const slider = document.getElementById('mainSlider');
+            const thumbs = document.querySelectorAll('.thumb-item');
+            
+            slider.style.transform = `translateX(-${index * 100}%)`;
+            
+            thumbs.forEach(t => t.classList.remove('active'));
+            thumbs[index].classList.add('active');
+        };
 
-        carregar();
+        carregarDetalhes();
     </script>
 </body>
 </html>
