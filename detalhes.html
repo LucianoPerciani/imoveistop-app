@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalhes do Imóvel - ImóveisTop</title>
+    <style>
+        :root {
+            --primary: #ff385c;
+            --dark: #222222;
+            --light: #f7f7f7;
+            --border: #dddddd;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--light); color: var(--dark); }
+
+        /* HEADER PADRONIZADO */
+        .main-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 4%;
+            background: #fff;
+            border-bottom: 1px solid #eee;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .logo-container { display: flex; align-items: center; gap: 6px; text-decoration: none; }
+        .logo-text { font-weight: 800; font-size: 19px; color: #222; white-space: nowrap; }
+
+        .btn-voltar {
+            text-decoration: none;
+            color: #666;
+            font-size: 13px;
+            font-weight: 600;
+            padding: 7px 15px;
+            border-radius: 20px;
+            border: 1px solid #ddd;
+            transition: 0.2s;
+        }
+        .btn-voltar:hover { background-color: #f1f1f1; }
+
+        /* PÁGINA DE DETALHES */
+        .container-detalhe { max-width: 900px; margin: 20px auto; padding: 0 20px; }
+
+        .foto-principal {
+            width: 100%;
+            height: 450px;
+            object-fit: cover;
+            border-radius: 15px;
+            background: #eee;
+        }
+
+        .galeria-miniaturas {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+            overflow-x: auto;
+            padding-bottom: 10px;
+        }
+
+        .mini-foto {
+            width: 120px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 8px;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: 0.2s;
+            flex-shrink: 0;
+        }
+        .mini-foto:hover { border-color: var(--primary); }
+
+        .info-box {
+            margin-top: 25px;
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            border: 1px solid #eee;
+        }
+
+        .preco-box { font-size: 24px; font-weight: bold; color: #222; }
+        .descricao { line-height: 1.6; color: #444; margin: 20px 0; }
+        .badge { background: #f0f0f0; padding: 6px 12px; border-radius: 20px; font-size: 14px; margin-right: 8px; border: 1px solid #ddd; }
+
+        .btn-reserva {
+            display: block;
+            text-align: center;
+            background: #25d366;
+            color: white;
+            text-decoration: none;
+            padding: 15px;
+            border-radius: 12px;
+            font-weight: bold;
+            font-size: 18px;
+            margin: 30px 0;
+        }
+
+        #loader, #msg-erro { text-align: center; padding: 50px; color: #717171; }
+    </style>
+</head>
+
+<body>
+
+    <header class="main-header">
+        <a href="index.html" class="logo-container">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M3 9.5L12 3L21 9.5V20C21 20.5523 20.5523 21 20 21H14V14H10V21H4C3.44772 21 3 20.5523 3 20V9.5Z" stroke="#ff385c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+                <path d="M12 3V11" stroke="#ff385c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+            <span class="logo-text">Imóveis<span style="color: #ff385c;">Top</span></span>
+        </a>
+        <a href="index.html" class="btn-voltar">Voltar</a>
+    </header>
+
+    <main class="container-detalhe">
+        <div id="loader">Carregando informações do imóvel...</div>
+
+        <div id="conteudo-imovel" style="display: none;">
+            <!-- Foto Grande -->
+            <img id="imovel-foto-principal" src="" class="foto-principal">
+
+            <!-- Galeria -->
+            <div id="galeria-miniaturas" class="galeria-miniaturas"></div>
+
+            <div class="info-box">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                    <div>
+                        <h1 id="imovel-titulo" style="margin:0;"></h1>
+                        <p id="imovel-local" style="color: #717171; margin-top: 5px;"></p>
+                    </div>
+                    <div class="preco-box">R$ <span id="imovel-preco"></span> <span style="font-size:14px; font-weight:normal;">/ noite</span></div>
+                </div>
+
+                <hr style="border:0; border-top: 1px solid #eee; margin: 25px 0;">
+
+                <h3>O que este lugar oferece</h3>
+                <div id="imovel-comodidades" style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px;"></div>
+
+                <h3 style="margin-top: 25px;">Descrição</h3>
+                <p id="imovel-descricao" class="descricao"></p>
+
+                <a id="link-whats" href="#" target="_blank" class="btn-reserva">Reservar agora pelo WhatsApp</a>
+            </div>
+        </div>
+
+        <div id="msg-erro" style="display: none;">
+            <h2>Ops! Imóvel não encontrado.</h2>
+            <a href="index.html" style="color: #ff385c;">Voltar para a página inicial</a>
+        </div>
+    </main>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCmxZVNT7K8ZLV627XeKYRDJiViGw5OUCk",
+            authDomain: "cadastrocasas-50f8a.firebaseapp.com",
+            projectId: "cadastrocasas-50f8a",
+            storageBucket: "cadastrocasas-50f8a.firebasestorage.app",
+            messagingSenderId: "393041222159",
+            appId: "1:393041222159:web:c064df3b250abdb340e17a"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const id = new URLSearchParams(window.location.search).get('id');
+
+        async function carregar() {
+            if (!id) { mostrarErro(); return; }
+
+            try {
+                const snap = await getDoc(doc(db, "imoveis", id));
+                if (snap.exists()) {
+                    const dados = snap.data();
+                    const fotoPrincipal = document.getElementById('imovel-foto-principal');
+                    const galeria = document.getElementById('galeria-miniaturas');
+
+                    // Lógica para múltiplas fotos (Array)
+                    if (dados.fotos && Array.isArray(dados.fotos) && dados.fotos.length > 0) {
+                        fotoPrincipal.src = dados.fotos[0];
+                        dados.fotos.forEach(url => {
+                            const img = document.createElement('img');
+                            img.src = url;
+                            img.className = 'mini-foto';
+                            img.onclick = () => fotoPrincipal.src = url;
+                            galeria.appendChild(img);
+                        });
+                    } else {
+                        // Se não tiver o array de fotos, usa a foto única antiga
+                        fotoPrincipal.src = dados.foto || 'https://via.placeholder.com/800x450';
+                        galeria.style.display = 'none';
+                    }
+
+                    document.getElementById('imovel-titulo').innerText = dados.titulo;
+                    document.getElementById('imovel-local').innerText = "📍 " + (dados.endereco || "Localização não informada");
+                    document.getElementById('imovel-preco').innerText = dados.preco;
+                    document.getElementById('imovel-descricao').innerText = dados.descricao || "Sem descrição disponível.";
+
+                    const comContainer = document.getElementById('imovel-comodidades');
+                    if (dados.comodidades) {
+                        dados.comodidades.forEach(c => {
+                            comContainer.innerHTML += `<span class="badge">${c}</span>`;
+                        });
+                    }
+
+                    document.getElementById('link-whats').href = `https://wa.me/5519999859655?text=Olá! Gostaria de informações sobre o imóvel: ${dados.titulo}`;
+                    
+                    document.getElementById('loader').style.display = 'none';
+                    document.getElementById('conteudo-imovel').style.display = 'block';
+                } else {
+                    mostrarErro();
+                }
+            } catch (e) {
+                console.error(e);
+                mostrarErro();
+            }
+        }
+
+        function mostrarErro() {
+            document.getElementById('loader').style.display = 'none';
+            document.getElementById('msg-erro').style.display = 'block';
+        }
+
+        carregar();
+    </script>
+</body>
+</html>

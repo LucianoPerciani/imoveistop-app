@@ -1,75 +1,204 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ImóveisTop - Sua casa em qualquer lugar</title>
-    <link rel="stylesheet" href="style.css"> 
+    <link rel="stylesheet" href="style.css">
     <style>
         /* Estilos dos Cards */
-        .card-imovel { border: 1px solid #ddd; border-radius: 12px; overflow: hidden; background: #fff; transition: 0.3s; }
-        .card-imovel:hover { transform: translateY(-5px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
-        .card-foto-wrapper { position: relative; }
-        .btn-favorito { position: absolute; top: 10px; right: 10px; background: white; border: none; border-radius: 50%; cursor: pointer; padding: 5px 8px; font-size: 18px; color: #ccc; box-shadow: 0 2px 5px rgba(0,0,0,0.2); z-index: 10; }
-        .btn-favorito.ativo { color: #ff385c; }
-        #listaImoveis { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; padding: 20px; }
-        .btn-whatsapp { display: block; text-align: center; background: #25d366; color: white; text-decoration: none; padding: 10px; border-radius: 8px; margin-top: 10px; font-weight: bold; }
-        .localizacao { font-size: 13px; color: #717171; margin: 4px 0; display: flex; align-items: center; gap: 4px; }
+        .card-imovel {
+            border: 1px solid #ddd;
+            border-radius: 12px;
+            overflow: hidden;
+            background: #fff;
+            transition: 0.3s;
+        }
+
+        .card-imovel:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-foto-wrapper {
+            position: relative;
+        }
+
+        .btn-favorito {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: white;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            padding: 5px 8px;
+            font-size: 18px;
+            color: #ccc;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            z-index: 10;
+        }
+
+        .btn-favorito.ativo {
+            color: #ff385c;
+        }
+
+        #listaImoveis {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .btn-whatsapp {
+            display: block;
+            text-align: center;
+            background: #25d366;
+            color: white;
+            text-decoration: none;
+            padding: 10px;
+            border-radius: 8px;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        .localizacao {
+            font-size: 13px;
+            color: #717171;
+            margin: 4px 0;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
 
         /* Cabeçalho Profissional */
-        .main-header { 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            padding: 10px 4%; 
-            background: #fff; 
-            border-bottom: 1px solid #eee; 
-            position: sticky; 
-            top: 0; 
-            z-index: 1000; 
+        .main-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 4%;
+            background: #fff;
+            border-bottom: 1px solid #eee;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
         }
-        
-        .logo-container { display: flex; align-items: center; gap: 6px; text-decoration: none; }
-        .logo-text { font-family: 'Inter', sans-serif; font-weight: 800; font-size: 19px; color: #222; white-space: nowrap; }
 
-        .btn-anuncie { 
-            text-decoration: none; 
-            color: #222; 
-            font-size: 13px; 
-            font-weight: 600; 
-            padding: 7px 12px; 
-            border-radius: 20px; 
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            text-decoration: none;
+        }
+
+        .logo-text {
+            font-family: 'Inter', sans-serif;
+            font-weight: 800;
+            font-size: 19px;
+            color: #222;
+            white-space: nowrap;
+        }
+
+        .btn-anuncie {
+            text-decoration: none;
+            color: #222;
+            font-size: 13px;
+            font-weight: 600;
+            padding: 7px 12px;
+            border-radius: 20px;
             border: 1px solid #ddd;
             white-space: nowrap;
             transition: 0.3s;
             cursor: pointer;
         }
-        .btn-anuncie:hover { background-color: #f7f7f7; border-color: #ff385c; color: #ff385c; }
 
-        .user-menu { display: flex; align-items: center; gap: 8px; }
-        .avatar-circle { width: 35px; height: 35px; border-radius: 50%; background-color: #ff385c; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; text-decoration: none; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        .user-controls { display: flex; flex-direction: column; align-items: center; }
+        .btn-anuncie:hover {
+            background-color: #f7f7f7;
+            border-color: #ff385c;
+            color: #ff385c;
+        }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .avatar-circle {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background-color: #ff385c;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            text-decoration: none;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .user-controls {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
 
         /* Filtros */
-        .filters { padding: 15px; background: #fff; border-bottom: 1px solid #eee; display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
-        .filters input, .filters select { padding: 8px; border: 1px solid #ddd; border-radius: 8px; outline: none; font-size: 14px; }
-        #filtroTitulo { flex: 1; min-width: 140px; }
-        #filtroPreco { width: 90px; }
+        .filters {
+            padding: 15px;
+            background: #fff;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .filters input,
+        .filters select {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            outline: none;
+            font-size: 14px;
+        }
+
+        #filtroTitulo {
+            flex: 1;
+            min-width: 140px;
+        }
+
+        #filtroPreco {
+            width: 90px;
+        }
 
         @media (max-width: 600px) {
-            .logo-text { font-size: 16px; } 
-            .btn-anuncie { font-size: 11px; padding: 6px 10px; }
-            .main-header { padding: 10px 2%; }
+            .logo-text {
+                font-size: 16px;
+            }
+
+            .btn-anuncie {
+                font-size: 11px;
+                padding: 6px 10px;
+            }
+
+            .main-header {
+                padding: 10px 2%;
+            }
         }
     </style>
 </head>
+
 <body>
 
     <header class="main-header">
         <a href="index.html" class="logo-container">
             <svg width="26" height="26" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M3 9.5L12 3L21 9.5V20C21 20.5523 20.5523 21 20 21H14V14H10V21H4C3.44772 21 3 20.5523 3 20V9.5Z" stroke="#ff385c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-                <path d="M12 3V11" stroke="#ff385c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M3 9.5L12 3L21 9.5V20C21 20.5523 20.5523 21 20 21H14V14H10V21H4C3.44772 21 3 20.5523 3 20V9.5Z"
+                    stroke="#ff385c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+                <path d="M12 3V11" stroke="#ff385c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
             </svg>
             <span class="logo-text">Imóveis<span style="color: #ff385c;">Top</span></span>
         </a>
@@ -90,7 +219,8 @@
             <option value="Piscina">Piscina</option>
             <option value="Ar Condicionado">Ar Condicionado</option>
         </select>
-        <button id="btnFiltrar" style="background: #ff385c; color: white; border: none; padding: 8px 15px; border-radius: 8px; cursor: pointer; font-weight: bold;">Buscar</button>
+        <button id="btnFiltrar"
+            style="background: #ff385c; color: white; border: none; padding: 8px 15px; border-radius: 8px; cursor: pointer; font-weight: bold;">Buscar</button>
     </section>
 
     <main>
@@ -130,7 +260,7 @@
                     const snap = await getDoc(docRef);
                     const nome = snap.data()?.nome || "Usuário";
                     const inicial = nome.charAt(0).toUpperCase();
-                    const isAdmin = user.email === "lucianoperciani1@gmail.com"; 
+                    const isAdmin = user.email === "lucianoperciani1@gmail.com";
 
                     authContent.innerHTML = `
                         <div class="user-menu">
@@ -172,12 +302,12 @@
                     favoritos = snap.data()?.favoritos || [];
                 }
                 const querySnapshot = await getDocs(collection(db, "imoveis"));
-                container.innerHTML = ""; 
+                container.innerHTML = "";
                 let encontrou = false;
 
                 querySnapshot.forEach((documento) => {
                     const dados = documento.data();
-                    
+
                     if (filtros.titulo && !dados.titulo?.toLowerCase().includes(filtros.titulo.toLowerCase())) return;
                     if (filtros.preco && Number(dados.preco) > Number(filtros.preco)) return;
                     if (filtros.comodidade && !dados.comodidades?.includes(filtros.comodidade)) return;
@@ -185,21 +315,25 @@
                     encontrou = true;
                     const isFav = favoritos.includes(documento.id) ? 'ativo' : '';
                     container.innerHTML += `
-                        <div class="card-imovel">
-                            <div class="card-foto-wrapper">
-                                <button class="btn-favorito ${isFav}" onclick="window.gerenciarFavorito('${documento.id}', this)">❤</button>
-                                <img src="${dados.foto || 'https://via.placeholder.com/400'}" style="width:100%; height:190px; object-fit:cover;">
-                            </div>
-                            <div class="card-info" style="padding:15px;">
-                                <h3 style="font-size:15px; margin:0; color:#222;">${dados.titulo}</h3>
-                                <p class="localizacao">📍 ${dados.endereco || 'Localização'}</p>
-                                <p style="color:#222; font-weight:bold; margin:8px 0;">R$ ${dados.preco} <span style="font-weight:normal; color:#717171;">/ noite</span></p>
-                                <a href="https://wa.me/5519999859655?text=Olá! Tenho interesse no imóvel: ${dados.titulo}" class="btn-whatsapp" target="_blank">Chamar no WhatsApp</a>
-                            </div>
-                        </div>
-                    `;
+    <div class="card-imovel">
+        <div class="card-foto-wrapper">
+            <button class="btn-favorito ${isFav}" onclick="window.gerenciarFavorito('${documento.id}', this)">❤</button>
+            <a href="detalhes.html?id=${documento.id}">
+                <img src="${dados.foto || 'https://via.placeholder.com/400'}" style="width:100%; height:190px; object-fit:cover;">
+            </a>
+        </div>
+        <div class="card-info" style="padding:15px;">
+            <a href="detalhes.html?id=${documento.id}" style="text-decoration:none; color:inherit;">
+                <h3 style="font-size:15px; margin:0; color:#222;">${dados.titulo}</h3>
+            </a>
+            <p class="localizacao">📍 ${dados.endereco || 'Localização'}</p>
+            <p style="color:#222; font-weight:bold; margin:8px 0;">R$ ${dados.preco} <span style="font-weight:normal; color:#717171;">/ noite</span></p>
+            <a href="https://wa.me/5519999859655?text=Olá! Tenho interesse no imóvel: ${dados.titulo}" class="btn-whatsapp" target="_blank">Chamar no WhatsApp</a>
+        </div>
+    </div>
+`;
                 });
-                
+
                 if (!encontrou) container.innerHTML = "<p style='grid-column: 1/-1; text-align:center;'>Nenhum imóvel encontrado.</p>";
             } catch (e) { container.innerHTML = "Erro ao carregar lista."; }
         }
@@ -213,4 +347,5 @@
         };
     </script>
 </body>
+
 </html>

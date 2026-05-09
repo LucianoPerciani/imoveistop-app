@@ -63,8 +63,9 @@
                 </div>
 
                 <div class="input-group">
-                    <label>Link da Foto (URL)</label>
-                    <input type="url" id="fotoUrl" placeholder="https://linkdafoto.com/imagem.jpg" required>
+                    <label>Links das Fotos (Separados por vírgula)</label>
+                    <textarea id="fotosUrls" rows="3" placeholder="https://link1.com/foto.jpg, https://link2.com/foto.jpg" required></textarea>
+                    <small style="color: #666; font-size: 11px;">Cole os links das imagens separando cada um com uma vírgula.</small>
                 </div>
 
                 <button type="submit" id="btnPublicar" class="btn-principal">Publicar Agora</button>
@@ -104,15 +105,19 @@
             const user = auth.currentUser;
             if (!user) return;
 
+            // Pega os links do campo de texto, divide pela vírgula e remove espaços extras
+            const fotosInput = document.getElementById('fotosUrls').value;
+            const listaFotos = fotosInput.split(',').map(url => url.trim()).filter(url => url !== "");
+
             const selecionados = Array.from(document.querySelectorAll('input[name="comodidade"]:checked'))
                                       .map(cb => cb.value);
 
             const novoImovel = {
                 titulo: document.getElementById('titulo').value,
-                endereco: document.getElementById('endereco').value, // SALVANDO ENDEREÇO
+                endereco: document.getElementById('endereco').value,
                 preco: Number(document.getElementById('preco').value),
                 descricao: document.getElementById('descricao').value,
-                foto: document.getElementById('fotoUrl').value,
+                fotos: listaFotos, // AGORA SALVA UMA LISTA (ARRAY) DE FOTOS
                 comodidades: selecionados,
                 idDono: user.uid,
                 status: "pendente",

@@ -12,14 +12,14 @@
             --gray: #717171;
             --border: #dddddd;
             --white: #ffffff;
-            --warning: #fff8e1; /* Cor de destaque para pendentes */
+            --warning: #fff8e1;
             --success: #4caf50;
+            --info: #007bff;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
         body { background-color: var(--light); color: var(--dark); padding-bottom: 50px; }
 
-        /* HEADER PADRONIZADO */
         .main-header { 
             display: flex; 
             justify-content: space-between; 
@@ -47,7 +47,6 @@
         }
         .btn-voltar:hover { background-color: #f7f7f7; color: var(--primary); border-color: var(--primary); }
 
-        /* DASHBOARD */
         .container { max-width: 1200px; margin: 30px auto 0; padding: 0 20px; }
         .grid-dashboard { display: grid; grid-template-columns: 1fr 1.2fr; gap: 25px; }
 
@@ -93,14 +92,11 @@
 
         .scroll-area { max-height: 500px; overflow-y: auto; margin-bottom: 20px; }
         
-        /* ITEM LISTA COM DESTAQUE */
         .item-lista {
             display: flex; align-items: center; gap: 12px; padding: 12px;
             border-bottom: 1px solid #eee;
-            transition: 0.3s;
         }
         
-        /* CLASSE DE DESTAQUE PARA PENDENTES */
         .item-pendente {
             background-color: var(--warning);
             border-left: 4px solid #ffc107;
@@ -112,13 +108,13 @@
         .info-mini span { font-size: 12px; color: var(--gray); }
         .badge-pendente { font-size: 10px; background: #ffc107; padding: 2px 6px; border-radius: 4px; font-weight: bold; }
 
-        .btn-group { display: flex; gap: 5px; }
+        .btn-group { display: flex; gap: 5px; flex-wrap: wrap; }
         .btn-del { background: #fff1f0; color: #ff4d4f; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 11px; font-weight: bold; }
         .btn-aprovar { background: #e8f5e9; color: var(--success); border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 11px; font-weight: bold; }
+        .btn-edit { background: #e6f7ff; color: var(--info); border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 11px; font-weight: bold; }
 
         @media (max-width: 900px) { 
             .grid-dashboard { grid-template-columns: 1fr; }
-            .main-header { padding: 10px 2%; }
         }
     </style>
 </head>
@@ -132,24 +128,22 @@
             </svg>
             <span class="logo-text">Imóveis<span style="color: #ff385c;">Top</span></span>
         </a>
-
-        <nav>
-            <a href="index.html" class="btn-voltar">Voltar</a>
-        </nav>
+        <a href="index.html" class="btn-voltar">Voltar</a>
     </header>
 
     <div class="container">
         <div class="grid-dashboard">
             
             <div class="card">
-                <h2>Cadastrar Imóvel</h2>
+                <h2 id="tituloForm">Cadastrar Imóvel</h2>
                 <div class="form-cadastro">
+                    <input type="hidden" id="editId">
                     <input type="text" id="cadTitulo" placeholder="Título do Anúncio">
                     <input type="text" id="cadEndereco" placeholder="Endereço Completo">
                     
                     <div style="display: flex; gap: 10px;">
                         <input type="number" id="cadPreco" placeholder="R$ Noite">
-                        <input type="text" id="cadFoto" placeholder="Link da Foto">
+                        <input type="text" id="cadFoto" placeholder="Links das Fotos (separe por vírgula)">
                     </div>
 
                     <textarea id="cadDesc" placeholder="Descrição do imóvel..." rows="3"></textarea>
@@ -165,7 +159,8 @@
                     </div>
                     
                     <button class="btn-postar" id="btnSalvar">Publicar Agora</button>
-                    <small style="color: gray; font-size: 11px; text-align: center;">* Novos imóveis precisam de aprovação.</small>
+                    <button id="btnCancelarEdit" style="display:none; background: #eee; border:none; padding:10px; border-radius:8px; cursor:pointer; margin-top:5px;">Cancelar Edição</button>
+                    <small style="color: gray; font-size: 11px; text-align: center; margin-top:10px;">* Separe os links das fotos por vírgula (,)</small>
                 </div>
             </div>
 
@@ -182,7 +177,7 @@
 
    <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getFirestore, collection, addDoc, getDocs, doc, deleteDoc, updateDoc, query } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    import { getFirestore, collection, addDoc, getDocs, doc, deleteDoc, updateDoc, getDoc, query } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyCmxZVNT7K8ZLV627XeKYRDJiViGw5OUCk",
@@ -203,84 +198,130 @@
         carregarUsuarios();
     }
 
-    // CADASTRO: Agora salvamos com status pendente por padrão
+    // FUNÇÃO PARA SALVAR OU ATUALIZAR
     document.getElementById('btnSalvar').onclick = async () => {
         const btn = document.getElementById('btnSalvar');
+        const editId = document.getElementById('editId').value;
         const selecionados = Array.from(document.querySelectorAll('input[name="comod"]:checked')).map(cb => cb.value);
+        
+        const rawFotos = document.getElementById('cadFoto').value;
+        const listaFotos = rawFotos.split(',').map(f => f.trim()).filter(f => f !== "");
 
         const dados = {
             titulo: document.getElementById('cadTitulo').value,
             endereco: document.getElementById('cadEndereco').value,
             preco: document.getElementById('cadPreco').value,
-            foto: document.getElementById('cadFoto').value,
+            fotos: listaFotos,
+            foto: listaFotos[0] || "",
             descricao: document.getElementById('cadDesc').value,
             comodidades: selecionados,
-            status: "pendente", 
-            dataCriacao: new Date()
+            status: editId ? "ativo" : "pendente", // Se for edição, mantém ativo
+            ultimaAtualizacao: new Date()
         };
 
-        if(!dados.titulo || !dados.preco) return alert("Preencha o título e o preço!");
+        if(!dados.titulo || !dados.preco || listaFotos.length === 0) return alert("Preencha título, preço e ao menos uma foto!");
 
         btn.disabled = true;
-        btn.innerText = "Salvando...";
+        btn.innerText = "Processando...";
 
         try {
-            await addDoc(collection(db, "imoveis"), dados);
-            alert("Imóvel enviado para a lista (pendente de aprovação)!");
+            if (editId) {
+                // ATUALIZAÇÃO
+                await updateDoc(doc(db, "imoveis", editId), dados);
+                alert("Imóvel atualizado!");
+            } else {
+                // NOVO CADASTRO
+                dados.dataCriacao = new Date();
+                await addDoc(collection(db, "imoveis"), dados);
+                alert("Imóvel cadastrado com sucesso!");
+            }
             location.reload();
         } catch (err) {
+            console.error(err);
             alert("Erro ao salvar.");
             btn.disabled = false;
             btn.innerText = "Publicar Agora";
         }
     };
 
+    // FUNÇÃO PARA CARREGAR NO FORMULÁRIO (EDITAR)
+    window.prepararEdicao = async (id) => {
+        const docSnap = await getDoc(doc(db, "imoveis", id));
+        if (docSnap.exists()) {
+            const im = docSnap.data();
+            
+            document.getElementById('editId').value = id;
+            document.getElementById('cadTitulo').value = im.titulo || "";
+            document.getElementById('cadEndereco').value = im.endereco || "";
+            document.getElementById('cadPreco').value = im.preco || "";
+            document.getElementById('cadFoto').value = im.fotos ? im.fotos.join(', ') : (im.foto || "");
+            document.getElementById('cadDesc').value = im.descricao || "";
+            
+            // Marcar checkboxes
+            document.querySelectorAll('input[name="comod"]').forEach(cb => {
+                cb.checked = im.comodidades ? im.comodidades.includes(cb.value) : false;
+            });
+
+            // Mudar visual do form
+            document.getElementById('tituloForm').innerText = "Editando Imóvel";
+            document.getElementById('btnSalvar').innerText = "Salvar Alterações";
+            document.getElementById('btnCancelarEdit').style.display = "block";
+            window.scrollTo(0, 0);
+        }
+    };
+
+    document.getElementById('btnCancelarEdit').onclick = () => { location.reload(); };
+
     async function carregarImoveis() {
         const box = document.getElementById('listaGeral');
         try {
-            // Removido o orderBy para garantir que imóveis antigos sem data apareçam
             const q = query(collection(db, "imoveis")); 
             const snap = await getDocs(q);
             
             if (snap.empty) {
-                box.innerHTML = "<p style='font-size:12px; color:gray; padding:10px;'>Nenhum imóvel cadastrado.</p>";
+                box.innerHTML = "<p style='font-size:12px; color:gray; padding:10px;'>Nenhum imóvel.</p>";
                 return;
             }
 
             box.innerHTML = "";
             snap.forEach(docu => {
                 const im = docu.data();
-                // Se o imóvel não tiver status (os antigos), tratamos como 'ativo'
                 const status = im.status || "ativo";
                 const isPendente = status === "pendente";
                 
                 box.innerHTML += `
                     <div class="item-lista ${isPendente ? 'item-pendente' : ''}">
-                        <img src="${im.foto || 'https://via.placeholder.com/50'}" class="img-mini">
+                        <img src="${im.foto || (im.fotos ? im.fotos[0] : 'https://via.placeholder.com/50')}" class="img-mini">
                         <div class="info-mini">
                             <strong>${im.titulo || 'Sem título'} ${isPendente ? '<span class="badge-pendente">PENDENTE</span>' : ''}</strong>
                             <span>${im.endereco || 'Sem endereço'}</span>
                         </div>
                         <div class="btn-group">
                             ${isPendente ? `<button class="btn-aprovar" onclick="window.aprovar('${docu.id}')">Aprovar</button>` : ''}
+                            <button class="btn-edit" onclick="window.prepararEdicao('${docu.id}')">Editar</button>
                             <button class="btn-del" onclick="window.remover('${docu.id}')">Excluir</button>
                         </div>
                     </div>`;
             });
-        } catch(e) { 
-            console.error(e);
-            box.innerHTML = "<p style='font-size:12px; color:red; padding:10px;'>Erro ao carregar lista.</p>"; 
-        }
+        } catch(e) { box.innerHTML = "Erro ao carregar."; }
     }
 
     window.aprovar = async (id) => {
-        if(confirm("Deseja aprovar este imóvel?")) {
+        if(confirm("Aprovar imóvel?")) {
             try {
-                const imovelRef = doc(db, "imoveis", id);
-                await updateDoc(imovelRef, { status: "ativo" });
-                alert("Imóvel aprovado!");
+                await updateDoc(doc(db, "imoveis", id), { status: "ativo" });
+                alert("Aprovado!");
                 carregarImoveis();
-            } catch(e) { alert("Erro ao aprovar."); }
+            } catch(e) { alert("Erro."); }
+        }
+    };
+
+    window.remover = async (id) => {
+        if(confirm("Remover anúncio?")) {
+            try {
+                await deleteDoc(doc(db, "imoveis", id));
+                carregarImoveis();
+            } catch(e) { alert("Erro."); }
         }
     };
 
@@ -292,22 +333,13 @@
             querySnapshot.forEach(u => {
                 const user = u.data();
                 box.innerHTML += `
-                    <div class="info-mini" style="padding: 10px; border-bottom: 1px solid #eee;">
-                        <strong>${user.nome || 'Usuário sem nome'}</strong>
-                        <span style="font-size: 11px; color: #717171;">${user.email || 'E-mail não informado'}</span>
+                    <div style="padding: 10px; border-bottom: 1px solid #eee;">
+                        <strong>${user.nome || 'Usuário'}</strong><br>
+                        <span style="font-size: 11px; color: #717171;">${user.email}</span>
                     </div>`;
             });
         } catch(e) { box.innerHTML = "..."; }
     }
-
-    window.remover = async (id) => {
-        if(confirm("Remover anúncio?")) {
-            try {
-                await deleteDoc(doc(db, "imoveis", id));
-                carregarImoveis();
-            } catch(e) { alert("Erro ao excluir."); }
-        }
-    };
 </script>
 </body>
 </html>
